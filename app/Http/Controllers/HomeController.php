@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\View\View;
 
 class HomeController extends Controller
@@ -12,13 +13,38 @@ class HomeController extends Controller
      */
     public function index(): View
     {
-        $heroProduct = Product::where('featured_position', 'hero')->first();
-        
-        $secondaryProducts = Product::where('featured_position', 'secondary')
-            ->with('category')
-            ->take(3)
+        $heroProduct = $this->homepageProductQuery()
+            ->where('featured_position', 'hero')
+            ->first();
+
+        $secondaryProducts = $this->homepageProductQuery()
+            ->where('featured_position', 'secondary')
+            ->when($heroProduct, function (Builder $query) use ($heroProduct): void {
+                $query->where('id', '!=', $heroProduct->id);
+            })
+            ->latest()
+            ->limit(3)
             ->get();
 
         return view('welcome', compact('heroProduct', 'secondaryProducts'));
+    }
+
+    /**
+     * Build the product query used for homepage merchandising.
+     */
+    private function homepageProductQuery(): Builder
+    {
+        return Product::query()
+            ->with('category')
+            ->where('status', 'active')
+            ->whereNotNull('image_url')
+            ->where('image_url', '!=', '')
+            ->where('image_url', 'not like', 'https://images.unsplash.com/%')
+            ->where('image_url', 'not like', '%placeholder%')
+            ->where(function (Builder $query): void {
+                $query->where('image_url', 'like', 'https://static.nike.com/%')
+                    ->orWhere('image_url', 'like', '/images/%')
+                    ->orWhere('image_url', 'like', 'images/%');
+            });
     }
 }

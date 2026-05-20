@@ -130,7 +130,7 @@
                     @foreach($wishlistProducts as $product)
                         <div id="wishlist-item-{{ $product->id }}" class="group relative bg-nike-snow border border-nike-gray-100 p-4 hover:shadow-xl transition-all">
                             {{-- Delete Button --}}
-                            <button onclick="removeFromWishlist('{{ $product->id }}')" class="absolute top-2 right-2 z-10 bg-white/80 backdrop-blur-sm text-nike-black p-1.5 rounded-full hover:bg-nike-red hover:text-white transition-all shadow-sm">
+                            <button onclick="openWishlistDeleteModal('{{ $product->id }}')" class="absolute top-2 right-2 z-10 bg-white/80 backdrop-blur-sm text-nike-black p-1.5 rounded-full hover:bg-nike-red hover:text-white transition-all shadow-sm">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
 
@@ -146,6 +146,23 @@
                     @endforeach
                 </div>
             @endif
+        </div>
+    </div>
+
+    {{-- Custom Wishlist Deletion Modal --}}
+    <div id="wishlist-delete-modal" class="fixed inset-0 z-[9999] flex items-center justify-center hidden">
+        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="closeWishlistDeleteModal()"></div>
+        <div class="relative bg-white p-8 max-w-sm w-full border border-nike-gray-200 shadow-2xl animate-[scale-in_0.2s_ease-out] text-center rounded-none">
+            <h3 class="font-bold uppercase tracking-widest text-nike-black text-sm mb-4">Xác nhận</h3>
+            <p class="text-nike-gray-500 font-medium text-xs uppercase tracking-tight mb-8">Bạn muốn xóa sản phẩm này khỏi danh sách yêu thích?</p>
+            <div class="flex space-x-4">
+                <button onclick="closeWishlistDeleteModal()" class="flex-1 border border-black text-black py-3 text-[11px] font-bold uppercase tracking-widest hover:bg-nike-gray-50 transition-colors rounded-none">
+                    [ HỦY ]
+                </button>
+                <button onclick="confirmRemoveFromWishlist()" class="flex-1 bg-black text-white py-3 text-[11px] font-bold uppercase tracking-widest hover:bg-nike-gray-800 transition-colors rounded-none">
+                    [ XÁC NHẬN ]
+                </button>
+            </div>
         </div>
     </div>
 </section>
@@ -168,8 +185,22 @@
         activeBtn.classList.add('border-nike-black');
     }
 
-    async function removeFromWishlist(productId) {
-        if (!confirm('Bạn muốn xóa sản phẩm này khỏi danh sách yêu thích?')) return;
+    let targetProductId = null;
+
+    function openWishlistDeleteModal(productId) {
+        targetProductId = productId;
+        document.getElementById('wishlist-delete-modal').classList.remove('hidden');
+    }
+
+    function closeWishlistDeleteModal() {
+        targetProductId = null;
+        document.getElementById('wishlist-delete-modal').classList.add('hidden');
+    }
+
+    async function confirmRemoveFromWishlist() {
+        if (!targetProductId) return;
+        const productId = targetProductId;
+        closeWishlistDeleteModal();
 
         try {
             const response = await fetch("{{ route('wishlist.toggle') }}", {
@@ -186,23 +217,26 @@
             
             if (data.status === 'removed') {
                 const element = document.getElementById(`wishlist-item-${productId}`);
-                element.style.opacity = '0';
-                element.style.transform = 'scale(0.9)';
-                
-                setTimeout(() => {
-                    element.remove();
+                if (element) {
+                    element.style.opacity = '0';
+                    element.style.transform = 'scale(0.9)';
                     
-                    // Check if wishlist is now empty
-                    const grid = document.getElementById('wishlist-grid');
-                    if (grid && grid.children.length === 0) {
-                        grid.remove();
-                        const container = document.getElementById('tab-content-wishlist');
-                        const msg = document.createElement('p');
-                        msg.className = 'text-nike-gray-500';
-                        msg.innerText = 'Danh sách yêu thích của bạn đang trống.';
-                        container.appendChild(msg);
-                    }
-                }, 300);
+                    setTimeout(() => {
+                        element.remove();
+                        
+                        // Check if wishlist is now empty
+                        const grid = document.getElementById('wishlist-grid');
+                        if (grid && grid.children.length === 0) {
+                            grid.remove();
+                            const container = document.getElementById('tab-content-wishlist');
+                            const msg = document.createElement('p');
+                            msg.id = 'empty-wishlist-msg';
+                            msg.className = 'text-nike-gray-500';
+                            msg.innerText = 'Danh sách yêu thích của bạn đang trống.';
+                            container.appendChild(msg);
+                        }
+                    }, 300);
+                }
 
                 if (typeof showSuccessModal === 'function') {
                     showSuccessModal('Đã xóa khỏi yêu thích');

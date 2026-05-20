@@ -13,9 +13,9 @@
     <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-nike-gray-100">
         {{-- Utility Nav --}}
         <div class="bg-nike-gray-100 py-1.5 px-6 md:px-12 flex justify-end items-center space-x-6 text-[10px] font-bold uppercase tracking-widest">
-            <a href="{{ route('about') }}" class="hover:text-nike-gray-500 {{ request()->routeIs('about') ? 'text-nike-black underline' : '' }}">Câu chuyện</a>
+            <a href="{{ route('story') }}" class="hover:text-nike-gray-500 {{ request()->routeIs('story') ? 'text-nike-black underline' : '' }}">Câu chuyện</a>
             <span class="text-nike-gray-300">|</span>
-            <a href="#" class="hover:text-nike-gray-500">Tìm cửa hàng</a>
+            <a href="{{ route('stores') }}" class="hover:text-nike-gray-500 {{ request()->routeIs('stores') ? 'text-nike-black underline' : '' }}">Tìm cửa hàng</a>
             <span class="text-nike-gray-300">|</span>
             <a href="#" class="hover:text-nike-gray-500">Hỗ trợ</a>
         </div>

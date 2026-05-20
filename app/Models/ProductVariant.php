@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ProductVariant extends Model
@@ -32,7 +33,7 @@ class ProductVariant extends Model
     /**
      * Get the marketplace listings for this variant.
      */
-    public function listings()
+    public function listings(): HasMany
     {
         return $this->hasMany(MarketplaceListing::class, 'product_variant_id');
     }

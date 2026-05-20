@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about-us', [AboutController::class, 'index'])->name('about');
+Route::view('/story', 'story')->name('story');
+Route::view('/stores', 'stores')->name('stores');
 Route::get('/discount-sale', [ProductController::class, 'sale'])->name('catalog.sale');
 
 // B2C Catalog Routes
@@ -51,6 +53,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/marketplace/create', [MarketplaceController::class, 'create'])->name('marketplace.create')->middleware('auth');
     Route::post('/marketplace', [MarketplaceController::class, 'store'])->name('marketplace.store')->middleware('auth');
     Route::get('/marketplace/search-products', [MarketplaceController::class, 'search'])->name('marketplace.search');
+    Route::get('/marketplace/products/{product}/variants', [MarketplaceController::class, 'variants'])->name('marketplace.products.variants');
 
     // Admin Dashboard & Management
     Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {

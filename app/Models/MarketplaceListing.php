@@ -2,14 +2,18 @@
 
 namespace App\Models;
 
+use App\Enums\MarketplaceListingCondition;
+use App\Enums\MarketplaceListingStatus;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MarketplaceListing extends Model
 {
-    use HasUuids, SoftDeletes;
+    use HasFactory, HasUuids, SoftDeletes;
 
     protected $fillable = [
         'user_id',
@@ -21,11 +25,33 @@ class MarketplaceListing extends Model
     ];
 
     /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'asking_price' => 'decimal:2',
+            'condition' => MarketplaceListingCondition::class,
+            'status' => MarketplaceListingStatus::class,
+        ];
+    }
+
+    /**
      * Scope a query to only include active listings.
      */
-    public function scopeActive($query)
+    public function scopeActive(Builder $query): Builder
     {
-        return $query->where('status', 'active');
+        return $query->where('status', MarketplaceListingStatus::Active->value);
+    }
+
+    /**
+     * Scope a query to only include pending listings.
+     */
+    public function scopePending(Builder $query): Builder
+    {
+        return $query->where('status', MarketplaceListingStatus::Pending->value);
     }
 
     /**
@@ -49,12 +75,18 @@ class MarketplaceListing extends Model
      */
     public function getConditionLabelAttribute(): string
     {
-        return match ($this->condition) {
-            'new_with_box' => 'Mới (Nguyên hộp)',
-            'like_new' => 'Như mới',
-            'good' => 'Tốt',
-            'fair' => 'Cũ',
-            default => 'Không xác định',
-        };
+        return $this->condition instanceof MarketplaceListingCondition
+            ? $this->condition->label()
+            : MarketplaceListingCondition::tryFrom((string) $this->condition)?->label() ?? 'Không xác định';
+    }
+
+    /**
+     * Accessor for status label.
+     */
+    public function getStatusLabelAttribute(): string
+    {
+        return $this->status instanceof MarketplaceListingStatus
+            ? $this->status->label()
+            : MarketplaceListingStatus::tryFrom((string) $this->status)?->label() ?? 'Không xác định';
     }
 }

@@ -8,32 +8,32 @@
     <div class="type-card p-6 rounded-xl">
         <p class="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-4">Tổng Doanh Thu</p>
         <div class="flex items-end justify-between">
-            <h3 class="text-2xl font-bold">1.280.000.000₫</h3>
-            <span class="text-xs font-bold text-green-500 bg-green-500/10 px-2 py-1 rounded">+12%</span>
+            <h3 class="text-2xl font-bold">{{ number_format($totalRevenue, 0, ',', '.') }}₫</h3>
+            <span class="text-xs font-bold text-green-500 bg-green-500/10 px-2 py-1 rounded">Live</span>
         </div>
     </div>
 
     <div class="type-card p-6 rounded-xl">
         <p class="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-4">Đơn Hàng Mới</p>
         <div class="flex items-end justify-between">
-            <h3 class="text-2xl font-bold">482</h3>
-            <span class="text-xs font-bold text-green-500 bg-green-500/10 px-2 py-1 rounded">+5%</span>
+            <h3 class="text-2xl font-bold">{{ $newOrdersCount }}</h3>
+            <span class="text-xs font-bold text-green-500 bg-green-500/10 px-2 py-1 rounded">Pending</span>
         </div>
     </div>
 
     <div class="type-card p-6 rounded-xl">
-        <p class="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-4">Sản Phẩm Đang Bán</p>
+        <p class="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-4">Sản Phẩm Quản Lý</p>
         <div class="flex items-end justify-between">
-            <h3 class="text-2xl font-bold">124</h3>
-            <span class="text-xs font-bold text-zinc-500 bg-zinc-500/10 px-2 py-1 rounded">0%</span>
+            <h3 class="text-2xl font-bold">{{ $productsCount }}</h3>
+            <span class="text-xs font-bold text-zinc-500 bg-zinc-500/10 px-2 py-1 rounded">Styles</span>
         </div>
     </div>
 
     <div class="type-card p-6 rounded-xl">
-        <p class="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-4">Thành Viên Mới</p>
+        <p class="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-4">Thành Viên</p>
         <div class="flex items-end justify-between">
-            <h3 class="text-2xl font-bold">+1,200</h3>
-            <span class="text-xs font-bold text-green-500 bg-green-500/10 px-2 py-1 rounded">+18%</span>
+            <h3 class="text-2xl font-bold">{{ $newMembersCount }}</h3>
+            <span class="text-xs font-bold text-green-500 bg-green-500/10 px-2 py-1 rounded">Users</span>
         </div>
     </div>
 </div>
@@ -56,18 +56,30 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-zinc-800">
+                    @forelse($recentOrders as $order)
                     <tr class="hover:bg-zinc-900/30">
-                        <td class="px-6 py-4 font-medium text-white">#ORD-2831</td>
-                        <td class="px-6 py-4 text-zinc-400">Nguyễn Văn A</td>
-                        <td class="px-6 py-4 text-white">2.400.000₫</td>
-                        <td class="px-6 py-4"><span class="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-500 text-[10px] font-bold uppercase">Processing</span></td>
+                        <td class="px-6 py-4 font-medium text-white">#{{ substr($order->id, 0, 8) }}...</td>
+                        <td class="px-6 py-4 text-zinc-400">{{ $order->user ? $order->user->name : $order->shipping_name }}</td>
+                        <td class="px-6 py-4 text-white">{{ number_format($order->total_price, 0, ',', '.') }}₫</td>
+                        <td class="px-6 py-4">
+                            @if($order->status === 'pending')
+                                <span class="px-2 py-0.5 rounded bg-yellow-500/10 text-yellow-500 text-[10px] font-bold uppercase">Pending</span>
+                            @elseif($order->status === 'paid')
+                                <span class="px-2 py-0.5 rounded bg-green-500/10 text-green-500 text-[10px] font-bold uppercase">Paid</span>
+                            @elseif($order->status === 'shipped')
+                                <span class="px-2 py-0.5 rounded bg-blue-500/10 text-blue-500 text-[10px] font-bold uppercase">Shipped</span>
+                            @elseif($order->status === 'delivered')
+                                <span class="px-2 py-0.5 rounded bg-zinc-500/10 text-zinc-500 text-[10px] font-bold uppercase">Delivered</span>
+                            @else
+                                <span class="px-2 py-0.5 rounded bg-red-500/10 text-red-500 text-[10px] font-bold uppercase">{{ $order->status }}</span>
+                            @endif
+                        </td>
                     </tr>
-                    <tr class="hover:bg-zinc-900/30">
-                        <td class="px-6 py-4 font-medium text-white">#ORD-2830</td>
-                        <td class="px-6 py-4 text-zinc-400">Lê Thị B</td>
-                        <td class="px-6 py-4 text-white">1.850.000₫</td>
-                        <td class="px-6 py-4"><span class="px-2 py-0.5 rounded-full bg-green-500/10 text-green-500 text-[10px] font-bold uppercase">Shipped</span></td>
+                    @empty
+                    <tr>
+                        <td colspan="4" class="px-6 py-8 text-center text-zinc-500 italic">Không có đơn hàng nào gần đây.</td>
                     </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
