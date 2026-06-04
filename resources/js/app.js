@@ -45,8 +45,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const button = document.querySelector('[data-theme-menu-button]');
     const panel = document.querySelector('[data-theme-menu-panel]');
 
+    const setThemeMenuOpen = (isOpen) => {
+        panel?.classList.toggle('hidden', ! isOpen);
+        button?.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    };
+
     button?.addEventListener('click', () => {
-        panel?.classList.toggle('hidden');
+        setThemeMenuOpen(panel?.classList.contains('hidden') ?? false);
     });
 
     document.querySelectorAll('[data-theme-option]').forEach((option) => {
@@ -54,13 +59,19 @@ document.addEventListener('DOMContentLoaded', () => {
             const preference = option.dataset.themeOption || 'system';
             writeThemePreference(preference);
             applyStorefrontTheme(preference);
-            panel?.classList.add('hidden');
+            setThemeMenuOpen(false);
         });
     });
 
     document.addEventListener('click', (event) => {
         if (menu && ! menu.contains(event.target)) {
-            panel?.classList.add('hidden');
+            setThemeMenuOpen(false);
+        }
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            setThemeMenuOpen(false);
         }
     });
 

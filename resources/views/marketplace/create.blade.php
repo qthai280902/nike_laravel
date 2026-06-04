@@ -27,7 +27,7 @@
             </div>
         @endif
 
-        <form action="{{ route('marketplace.store') }}" method="POST" class="grid grid-cols-1 gap-8 lg:grid-cols-12">
+        <form action="{{ route('marketplace.store') }}" method="POST" enctype="multipart/form-data" class="grid grid-cols-1 gap-8 lg:grid-cols-12">
             @csrf
 
             <div class="space-y-8 lg:col-span-8">
@@ -96,6 +96,16 @@
                         <input id="image_url" name="image_url" type="url" value="{{ old('image_url') }}" placeholder="https://..."
                             class="w-full border-b border-nike-gray-200 bg-transparent py-4 text-sm font-bold text-nike-black outline-none transition focus:border-nike-black">
                         @error('image_url')
+                            <p class="mt-2 text-xs font-bold uppercase tracking-widest text-nike-red">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label for="image_file" class="mb-2 block text-[10px] font-black uppercase tracking-widest text-nike-gray-400">Tải ảnh từ máy</label>
+                        <input id="image_file" name="image_file" type="file" accept="image/jpeg,image/png,image/webp"
+                            class="w-full border border-nike-gray-200 bg-nike-snow px-4 py-3 text-sm font-bold text-nike-black file:mr-4 file:rounded-full file:border-0 file:bg-nike-black file:px-4 file:py-2 file:text-[10px] file:font-black file:uppercase file:tracking-widest file:text-white">
+                        <p class="mt-2 text-[10px] font-bold uppercase tracking-widest text-nike-gray-400">JPG, PNG, WEBP tối đa 4MB. Ảnh tải lên sẽ ưu tiên hơn URL.</p>
+                        @error('image_file')
                             <p class="mt-2 text-xs font-bold uppercase tracking-widest text-nike-red">{{ $message }}</p>
                         @enderror
                     </div>
@@ -203,6 +213,7 @@
     const sizeInput = document.getElementById('size');
     const colorInput = document.getElementById('color');
     const imageInput = document.getElementById('image_url');
+    const imageFileInput = document.getElementById('image_file');
     const priceInput = document.getElementById('asking_price');
     const variantInput = document.getElementById('variant-input');
     const searchInput = document.getElementById('product-search');
@@ -213,6 +224,7 @@
 
     let searchTimeout;
     let currentProducts = [];
+    let uploadedPreviewUrl = '';
 
     function escapeHtml(value) {
         return String(value ?? '')
@@ -234,7 +246,7 @@
         document.getElementById('listing-preview-size').innerText = sizeInput.value || 'Chưa nhập';
         document.getElementById('listing-preview-color').innerText = colorInput.value || 'Chưa nhập';
         document.getElementById('listing-preview-price').innerText = formatCurrency(priceInput.value);
-        document.getElementById('listing-preview-img').src = imageInput.value || placeholderImage;
+        document.getElementById('listing-preview-img').src = uploadedPreviewUrl || imageInput.value || placeholderImage;
     }
 
     function renderProducts(products) {
@@ -347,6 +359,16 @@
 
     [productInput, brandInput, sizeInput, colorInput, imageInput, priceInput].forEach(input => {
         input.addEventListener('input', updatePreview);
+    });
+
+    imageFileInput.addEventListener('change', () => {
+        if (uploadedPreviewUrl) {
+            URL.revokeObjectURL(uploadedPreviewUrl);
+        }
+
+        const file = imageFileInput.files && imageFileInput.files.length > 0 ? imageFileInput.files[0] : null;
+        uploadedPreviewUrl = file ? URL.createObjectURL(file) : '';
+        updatePreview();
     });
 
     clearCatalogBtn.addEventListener('click', clearCatalogSelection);

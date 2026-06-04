@@ -22,11 +22,19 @@ class MarketplaceController extends Controller
     /**
      * Display the Marketplace feed.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
         $listings = $this->marketplaceService->getActiveListings();
+        $myListings = $request->user()
+            ? $request->user()->marketplaceListings()
+                ->withTrashed()
+                ->with(['variant.product.category'])
+                ->latest()
+                ->limit(5)
+                ->get()
+            : collect();
 
-        return view('marketplace.index', compact('listings'));
+        return view('marketplace.index', compact('listings', 'myListings'));
     }
 
     /**
@@ -49,12 +57,19 @@ class MarketplaceController extends Controller
             'size' => ['required_without:product_variant_id', 'nullable', 'string', 'max:40'],
             'color' => ['required_without:product_variant_id', 'nullable', 'string', 'max:80'],
             'image_url' => ['nullable', 'url', 'max:2048'],
+            'image_file' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
             'asking_price' => ['required', 'numeric', 'min:0'],
             'condition' => ['required', Rule::enum(MarketplaceListingCondition::class)],
             'seller_description' => ['required', 'string', 'max:1500'],
         ]);
 
-        $this->marketplaceService->createListing($validated, auth()->id());
+        if ($request->hasFile('image_file')) {
+            $validated['image_path'] = $request->file('image_file')->store('marketplace-listings', 'public');
+        }
+
+        unset($validated['image_file']);
+
+        $this->marketplaceService->createListing($validated, $request->user()->id);
 
         return redirect()->route('marketplace.index')
             ->with('success', 'Tin đăng của bạn đã được gửi và đang chờ kiểm duyệt.');
@@ -102,9 +117,11 @@ class MarketplaceController extends Controller
     /**
      * Display the specified marketplace listing detail.
      */
-    public function show(MarketplaceListing $listing): View
+    public function show(Request $request, MarketplaceListing $listing): View
     {
-        if ($listing->status !== MarketplaceListingStatus::Active) {
+        $isOwner = $request->user()?->id === $listing->user_id;
+
+        if ($listing->status !== MarketplaceListingStatus::Active && ! $isOwner) {
             abort(404);
         }
 

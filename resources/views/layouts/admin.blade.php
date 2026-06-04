@@ -37,7 +37,10 @@
     <aside class="type-sidebar w-64 flex-shrink-0 flex flex-col fixed inset-y-0 z-50">
         <div class="p-6 flex items-center space-x-3">
             <div class="w-8 h-8 bg-white rounded flex items-center justify-center">
-                <svg class="w-5 h-5 text-black" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+                <svg class="w-5 h-5 text-black" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5 17V7l7 10V7" stroke="currentColor" stroke-width="2.4" stroke-linecap="square" stroke-linejoin="miter"/>
+                    <path d="M15 17V7h4v10" stroke="currentColor" stroke-width="2.4" stroke-linecap="square" stroke-linejoin="miter"/>
+                </svg>
             </div>
             <span class="text-lg font-bold tracking-tight">Nike Hybrid Admin</span>
         </div>

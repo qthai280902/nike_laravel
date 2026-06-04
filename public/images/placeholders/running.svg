@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="Running product image">
+  <rect width="1024" height="1024" fill="#eef7f4"/>
+  <path d="M94 752c126-200 278-328 456-384 136-42 254-42 354 0-70 40-126 88-168 144-70 92-152 152-246 180-110 32-242 52-396 60z" fill="#cce9df"/>
+  <path d="M176 604c118-86 234-130 348-130 92 0 154 36 226 44 56 6 102-8 142-40 20 52 4 110-44 152-72 64-226 78-426 58-112-12-194-38-246-84z" fill="#111"/>
+  <path d="M260 574c78-42 164-62 258-60 70 2 124 18 164 40-88 20-198 28-330 20-30-2-60-2-92 0z" fill="#eef7f4"/>
+  <path d="M294 676h500c-24 58-68 86-132 86H328c-36-14-48-42-34-86z" fill="#0f766e"/>
+  <text x="72" y="166" fill="#111" font-family="Arial, sans-serif" font-size="72" font-weight="900">RUNNING</text>
+</svg>

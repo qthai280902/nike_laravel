@@ -10,6 +10,8 @@ use App\Models\ProductVariant;
 use App\Models\User;
 use App\Services\MarketplaceService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -136,6 +138,36 @@ class MarketplaceTest extends TestCase
             'product_name' => 'Nike Dunk Low Vintage',
             'status' => MarketplaceListingStatus::Pending->value,
         ]);
+    }
+
+    #[Test]
+    public function authenticated_user_can_upload_marketplace_listing_image_from_machine(): void
+    {
+        Storage::fake('public');
+        $user = User::factory()->create();
+        $file = UploadedFile::fake()->createWithContent(
+            'seller-pair.png',
+            base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=')
+        );
+
+        $this->actingAs($user)->post(route('marketplace.store'), [
+            'product_name' => 'Nike Uploaded Seller Pair',
+            'brand' => 'Nike',
+            'size' => 'US 9',
+            'color' => 'Black/White',
+            'image_file' => $file,
+            'asking_price' => 2500000,
+            'condition' => MarketplaceListingCondition::LikeNew->value,
+            'seller_description' => 'Ảnh được tải lên từ máy người bán.',
+        ])->assertRedirect(route('marketplace.index'));
+
+        $listing = MarketplaceListing::query()
+            ->where('product_name', 'Nike Uploaded Seller Pair')
+            ->firstOrFail();
+
+        $this->assertNotNull($listing->image_path);
+        Storage::disk('public')->assertExists($listing->image_path);
+        $this->assertStringContainsString('/storage/marketplace-listings/', $listing->display_image_url);
     }
 
     #[Test]
@@ -271,6 +303,74 @@ class MarketplaceTest extends TestCase
         $this->actingAs($user)
             ->get(route('admin.marketplace.index'))
             ->assertNotFound();
+    }
+
+    #[Test]
+    public function marketplace_index_shows_current_users_listing_status_without_publishing_it(): void
+    {
+        $owner = User::factory()->create();
+        $otherUserListing = MarketplaceListing::factory()->freeform()->create([
+            'status' => MarketplaceListingStatus::Pending,
+            'product_name' => 'Nike Other Pending Pair',
+        ]);
+        $myListing = MarketplaceListing::factory()->freeform()->create([
+            'user_id' => $owner->id,
+            'status' => MarketplaceListingStatus::Pending,
+            'product_name' => 'Nike My Pending Pair',
+        ]);
+
+        $this->actingAs($owner)
+            ->get(route('marketplace.index'))
+            ->assertOk()
+            ->assertSee('Tin của bạn')
+            ->assertSee('Nike My Pending Pair')
+            ->assertSee($myListing->owner_status_label)
+            ->assertDontSee('Nike Other Pending Pair');
+
+        $this->assertSame(MarketplaceListingStatus::Pending, $otherUserListing->fresh()->status);
+    }
+
+    #[Test]
+    public function listing_owner_can_view_inactive_listing_detail(): void
+    {
+        $owner = User::factory()->create();
+        $pendingListing = MarketplaceListing::factory()->freeform()->create([
+            'user_id' => $owner->id,
+            'status' => MarketplaceListingStatus::Pending,
+            'product_name' => 'Nike Owner Pending Pair',
+        ]);
+
+        $this->actingAs($owner)
+            ->get(route('marketplace.show', $pendingListing))
+            ->assertOk()
+            ->assertSee('Nike Owner Pending Pair')
+            ->assertSee($pendingListing->status_label);
+    }
+
+    #[Test]
+    public function profile_shows_marketplace_status_for_hidden_and_deleted_listings(): void
+    {
+        $owner = User::factory()->create();
+        MarketplaceListing::factory()->freeform()->create([
+            'user_id' => $owner->id,
+            'status' => MarketplaceListingStatus::Hidden,
+            'product_name' => 'Nike Hidden Seller Pair',
+        ]);
+        $deletedListing = MarketplaceListing::factory()->freeform()->create([
+            'user_id' => $owner->id,
+            'status' => MarketplaceListingStatus::Rejected,
+            'product_name' => 'Nike Deleted Seller Pair',
+        ]);
+        $deletedListing->delete();
+
+        $this->actingAs($owner)
+            ->get(route('profile.index'))
+            ->assertOk()
+            ->assertSee('Nike Hidden Seller Pair')
+            ->assertSee('Đã ẩn')
+            ->assertSee('Nike Deleted Seller Pair')
+            ->assertSee('Đã xóa')
+            ->assertDontSee(route('marketplace.show', $deletedListing), false);
     }
 
     #[Test]

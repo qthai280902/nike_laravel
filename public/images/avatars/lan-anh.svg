@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="Lan Anh avatar">
+  <rect width="160" height="160" fill="#f3f4f6"/>
+  <circle cx="80" cy="66" r="34" fill="#111111"/>
+  <path d="M30 146c9-32 27-49 50-49s41 17 50 49" fill="#d4d4d8"/>
+  <circle cx="68" cy="62" r="5" fill="#ffffff"/>
+  <circle cx="92" cy="62" r="5" fill="#ffffff"/>
+  <path d="M66 82c9 7 19 7 28 0" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
+</svg>

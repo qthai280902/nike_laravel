@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="Gia Han avatar">
+  <rect width="160" height="160" fill="#e5e7eb"/>
+  <circle cx="80" cy="72" r="38" fill="#27272a"/>
+  <path d="M34 146c7-31 25-49 46-49s39 18 46 49" fill="#ffffff"/>
+  <path d="M42 76c1-42 27-61 38-61s37 19 38 61c-13-11-63-11-76 0z" fill="#09090b"/>
+  <circle cx="68" cy="70" r="5" fill="#ffffff"/>
+  <circle cx="92" cy="70" r="5" fill="#ffffff"/>
+  <path d="M67 88c8 5 18 5 26 0" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
+</svg>

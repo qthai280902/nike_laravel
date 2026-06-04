@@ -64,7 +64,11 @@ class ProductController extends Controller
             return (new ProductResource($product))->response();
         }
 
-        return view('catalog.show', compact('product'));
+        $viewerReview = $request->user()
+            ? $request->user()->productReviews()->where('product_id', $product->id)->first()
+            : null;
+
+        return view('catalog.show', compact('product', 'viewerReview'));
     }
 
     /**

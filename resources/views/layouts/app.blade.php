@@ -21,7 +21,7 @@
     </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-white text-nike-black antialiased overflow-x-hidden font-nike-body">
+<body class="bg-white text-nike-black antialiased overflow-x-hidden font-nike-body transition-colors duration-200">
 
     {{-- Global Navigation --}}
     <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-nike-gray-100">
@@ -47,18 +47,24 @@
             <div class="hidden md:flex items-center space-x-1">
                 @php
                     $currentCategory = request()->get('category');
-                    $isHome = request()->is('/');
+                    $isHome = request()->routeIs('home') || request()->is('/');
                     $isSale = request()->routeIs('catalog.sale');
+                    $isMarketplace = request()->routeIs('marketplace.*');
+                    $isCatalogIndex = request()->routeIs('catalog.index') && ! $currentCategory;
+                    $isCatalogShow = request()->routeIs('catalog.show');
+                    $isCatalog = ($isCatalogIndex || $isCatalogShow) && ! $isSale;
+                    $isMen = request()->routeIs('catalog.index') && $currentCategory === 'men';
+                    $isWomen = request()->routeIs('catalog.index') && $currentCategory === 'women';
                     $pillClass = "px-5 py-2 rounded-[30px] text-[13px] font-bold uppercase tracking-tight transition-all whitespace-nowrap";
                     $activePill = "bg-nike-black text-white shadow-lg";
                     $inactivePill = "text-nike-black hover:bg-nike-gray-100";
                 @endphp
                 
                 <a href="/" class="{{ $pillClass }} {{ $isHome ? $activePill : $inactivePill }}">Trang chủ</a>
-                <a href="{{ route('catalog.index') }}" class="{{ $pillClass }} {{ (!$isHome && !$currentCategory && !$isSale) ? $activePill : $inactivePill }}">Cửa hàng</a>
-                <a href="{{ route('catalog.index', ['category' => 'men']) }}" class="{{ $pillClass }} {{ $currentCategory == 'men' ? $activePill : $inactivePill }}">Nam</a>
-                <a href="{{ route('catalog.index', ['category' => 'women']) }}" class="{{ $pillClass }} {{ $currentCategory == 'women' ? $activePill : $inactivePill }}">Nữ</a>
-                <a href="{{ route('marketplace.index') }}" class="{{ $pillClass }} {{ request()->routeIs('marketplace.*') ? $activePill : $inactivePill }}">Chợ đồ cũ</a>
+                <a href="{{ route('catalog.index') }}" class="{{ $pillClass }} {{ $isCatalog ? $activePill : $inactivePill }}">Cửa hàng</a>
+                <a href="{{ route('catalog.index', ['category' => 'men']) }}" class="{{ $pillClass }} {{ $isMen ? $activePill : $inactivePill }}">Nam</a>
+                <a href="{{ route('catalog.index', ['category' => 'women']) }}" class="{{ $pillClass }} {{ $isWomen ? $activePill : $inactivePill }}">Nữ</a>
+                <a href="{{ route('marketplace.index') }}" class="{{ $pillClass }} {{ $isMarketplace ? $activePill : $inactivePill }}">Chợ đồ cũ</a>
                 <a href="{{ route('catalog.sale') }}" class="{{ $pillClass }} {{ $isSale ? 'bg-nike-red text-white' : 'text-nike-red hover:bg-red-50' }}">Sale</a>
             </div>
 
@@ -77,13 +83,13 @@
                 </div>
 
                 <div class="relative" data-theme-menu>
-                    <button type="button" data-theme-menu-button class="flex h-9 w-9 items-center justify-center rounded-full border border-nike-gray-200 bg-white text-nike-black transition hover:border-nike-black" aria-label="Đổi giao diện">
+                    <button type="button" data-theme-menu-button class="theme-toggle-button flex h-9 w-9 items-center justify-center rounded-full border border-nike-gray-200 bg-white text-nike-black transition hover:border-nike-black focus:outline-none focus:ring-2 focus:ring-nike-gray-200" aria-label="Đổi giao diện" aria-expanded="false">
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 3v1m0 16v1m8.66-13.66-.7.7M4.04 19.96l-.7.7M21 12h-1M4 12H3m16.96 7.96-.7-.7M4.04 4.04l-.7-.7M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                     </button>
-                    <div data-theme-menu-panel class="absolute right-0 top-12 z-50 hidden w-44 border border-nike-gray-150 bg-white p-2 shadow-2xl">
-                        <button type="button" data-theme-option="light" class="w-full px-3 py-2 text-left text-xs font-bold uppercase tracking-widest text-nike-black transition hover:bg-nike-gray-100">Sáng</button>
-                        <button type="button" data-theme-option="dark" class="w-full px-3 py-2 text-left text-xs font-bold uppercase tracking-widest text-nike-black transition hover:bg-nike-gray-100">Tối</button>
-                        <button type="button" data-theme-option="system" class="w-full px-3 py-2 text-left text-xs font-bold uppercase tracking-widest text-nike-black transition hover:bg-nike-gray-100">Hệ thống</button>
+                    <div data-theme-menu-panel class="absolute right-0 top-12 z-50 hidden w-44 rounded-md border border-nike-gray-150 bg-white p-2 shadow-2xl">
+                        <button type="button" data-theme-option="light" class="w-full rounded px-3 py-2 text-left text-xs font-bold uppercase tracking-widest text-nike-black transition hover:bg-nike-gray-100">Sáng</button>
+                        <button type="button" data-theme-option="dark" class="w-full rounded px-3 py-2 text-left text-xs font-bold uppercase tracking-widest text-nike-black transition hover:bg-nike-gray-100">Tối</button>
+                        <button type="button" data-theme-option="system" class="w-full rounded px-3 py-2 text-left text-xs font-bold uppercase tracking-widest text-nike-black transition hover:bg-nike-gray-100">Hệ thống</button>
                     </div>
                 </div>
 

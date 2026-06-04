@@ -6,12 +6,19 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductReview;
 use App\Models\ProductVariant;
+use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class LiveProductSeeder extends Seeder
 {
+    /**
+     * @var array<int, User>|null
+     */
+    private ?array $reviewUsers = null;
+
     public function run(): void
     {
         $productsData = [
@@ -43,7 +50,7 @@ class LiveProductSeeder extends Seeder
                 'category' => 'Lifestyle',
                 'price' => 2500000,
                 'original_price' => 2900000,
-                'image_url' => 'https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/8e97f699-245c-4433-875f-3ee0a1f49615/NIKE+DUNK+LOW+RETRO.png',
+                'image_url' => 'https://static.nike.com/a/images/t_web_pdp_936_v2/f_auto%2Cu_9ddf04c7-2a9a-4d76-add1-d15af8f0263d%2Cc_scale%2Cfl_relative%2Cw_1.0%2Ch_1.0%2Cfl_layer_apply/dbd2620b-a99f-4279-97db-0344edf84e31/NIKE%2BDUNK%2BLOW%2BRETRO.png',
                 'featured_position' => 'secondary',
                 'description' => 'A hardwood classic brought back with crisp overlays and low-profile street energy.',
                 'type' => 'shoes',
@@ -65,7 +72,7 @@ class LiveProductSeeder extends Seeder
                 'category' => 'Running',
                 'price' => 3790000,
                 'original_price' => 4100000,
-                'image_url' => 'https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/5c1be7d7-2f3b-486a-84fb-3004d4128f73/PEGASUS+41.png',
+                'image_url' => 'https://static.nike.com/a/images/t_web_pdp_936_v2/f_auto%2Cu_9ddf04c7-2a9a-4d76-add1-d15af8f0263d%2Cc_scale%2Cfl_relative%2Cw_1.0%2Ch_1.0%2Cfl_layer_apply/d7df4815-2375-4608-8d2a-1772a7d7ad03/AIR%2BZOOM%2BPEGASUS%2B41.png',
                 'featured_position' => null,
                 'description' => 'Responsive cushioning in the Pegasus 41 provides an energized ride for everyday road running.',
                 'type' => 'shoes',
@@ -428,7 +435,7 @@ class LiveProductSeeder extends Seeder
                     ->orWhere('image_url', '');
             })
             ->update([
-                'image_url' => '/'.Product::FALLBACK_IMAGE_PATH,
+                'image_url' => '/images/placeholders/lifestyle.svg',
                 'featured_position' => null,
             ]);
 
@@ -563,6 +570,19 @@ class LiveProductSeeder extends Seeder
 
             $this->command->info("Seeded live catalog product: {$data['name']}");
         }
+
+        Product::query()
+            ->where('image_url', '/'.Product::FALLBACK_IMAGE_PATH)
+            ->with('category')
+            ->get()
+            ->each(function (Product $product): void {
+                $product->update([
+                    'image_url' => $this->placeholderImageUrl([
+                        'name' => $product->name,
+                        'category' => $product->category?->name,
+                    ]),
+                ]);
+            });
     }
 
     /**
@@ -629,7 +649,7 @@ class LiveProductSeeder extends Seeder
                 'category' => 'Lifestyle',
                 'price' => 2790000,
                 'original_price' => 3190000,
-                'image_url' => $placeholder,
+                'image_url' => 'https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/b7d9211c-26e7-431a-ac24-b0540fb3c00f/AIR+FORCE+1+%2707.png',
                 'featured_position' => null,
                 'description' => 'Biểu tượng sneaker đế cupsole bền bỉ, thân giày gọn và dễ dùng quanh năm.',
                 'type' => 'shoes',
@@ -654,7 +674,7 @@ class LiveProductSeeder extends Seeder
                 'category' => 'Lifestyle',
                 'price' => 2990000,
                 'original_price' => null,
-                'image_url' => $placeholder,
+                'image_url' => 'https://static.nike.com/a/images/t_web_pdp_936_v2/f_auto%2Cu_9ddf04c7-2a9a-4d76-add1-d15af8f0263d%2Cc_scale%2Cfl_relative%2Cw_1.0%2Ch_1.0%2Cfl_layer_apply/dbd2620b-a99f-4279-97db-0344edf84e31/NIKE%2BDUNK%2BLOW%2BRETRO.png',
                 'featured_position' => null,
                 'description' => 'Phối màu trắng đen dễ nhận diện, form Dunk thấp cổ hợp với nhiều kiểu trang phục.',
                 'type' => 'shoes',
@@ -678,7 +698,7 @@ class LiveProductSeeder extends Seeder
                 'category' => 'Lifestyle',
                 'price' => 2890000,
                 'original_price' => null,
-                'image_url' => $placeholder,
+                'image_url' => 'https://static.nike.com/a/images/t_web_pdp_936_v2/f_auto/fb7eda3c-5ac8-4d05-a18f-1c2c5e82e36e/BLAZER%2BMID%2B%2777%2BVNTG.png',
                 'featured_position' => null,
                 'description' => 'Cổ trung, thân giày tối giản và chất retro rõ nét cho phong cách thường ngày.',
                 'type' => 'shoes',
@@ -850,7 +870,7 @@ class LiveProductSeeder extends Seeder
                 'category' => 'Basketball',
                 'price' => 3290000,
                 'original_price' => 3790000,
-                'image_url' => $placeholder,
+                'image_url' => 'https://static.nike.com/a/images/t_PDP_1280_v1/f_auto%2Cq_auto%3Aeco%2Cu_126ab356-44d8-4a06-89b4-fcdcc8df0245%2Cc_scale%2Cfl_relative%2Cw_1.0%2Ch_1.0%2Cfl_layer_apply/b7e69fd2-0063-4b13-9c92-3d5967d4a526/AIR%2BJORDAN%2B1%2BLOW.png',
                 'featured_position' => null,
                 'description' => 'Dáng Jordan cổ thấp biểu tượng, dễ phối và phù hợp cả sân bóng lẫn đường phố.',
                 'type' => 'shoes',
@@ -1003,7 +1023,7 @@ class LiveProductSeeder extends Seeder
      */
     private function enrichedProductData(array $data): array
     {
-        $data['image_url'] = $this->safeCatalogImageUrl((string) ($data['image_url'] ?? ''));
+        $data['image_url'] = $this->safeCatalogImageUrl($data);
         $data['description'] = $this->localizedDescription($data);
         $data['product_story'] = $data['product_story'] ?? $this->productStory($data);
         $data['highlights'] = $data['highlights'] ?? $this->productHighlights($data);
@@ -1012,18 +1032,77 @@ class LiveProductSeeder extends Seeder
         return $data;
     }
 
-    private function safeCatalogImageUrl(string $imageUrl): string
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    private function safeCatalogImageUrl(array $data): string
     {
+        $imageUrl = (string) ($data['image_url'] ?? '');
         $normalizedImageUrl = strtolower($imageUrl);
 
         if ($imageUrl === ''
             || str_contains($normalizedImageUrl, 'images.unsplash.com')
             || str_contains($normalizedImageUrl, 'placeholder')
-            || str_contains($normalizedImageUrl, 'images.nike.com')) {
-            return '/'.Product::FALLBACK_IMAGE_PATH;
+            || str_contains($normalizedImageUrl, 'images.nike.com')
+            || ltrim($imageUrl, '/') === Product::FALLBACK_IMAGE_PATH) {
+            return $this->placeholderImageUrl($data);
         }
 
         return $imageUrl;
+    }
+
+    /**
+     * Pick a local visual family asset for seeded catalog products.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    private function placeholderImageUrl(array $data): string
+    {
+        $searchText = Str::lower(Str::ascii(implode(' ', [
+            $data['name'] ?? '',
+            $data['parent_category'] ?? '',
+            $data['category'] ?? '',
+            $data['type'] ?? '',
+        ])));
+
+        return match (true) {
+            str_contains($searchText, 'air max') => '/images/placeholders/airmax.svg',
+            str_contains($searchText, 'air force') => '/images/placeholders/airforce.svg',
+            str_contains($searchText, 'dunk') => '/images/placeholders/dunk.svg',
+            str_contains($searchText, 'jordan'),
+            str_contains($searchText, 'lebron'),
+            str_contains($searchText, 'giannis'),
+            str_contains($searchText, 'zion'),
+            str_contains($searchText, 'precision'),
+            str_contains($searchText, 'basketball') => '/images/placeholders/basketball.svg',
+            str_contains($searchText, 'pegasus'),
+            str_contains($searchText, 'vaporfly'),
+            str_contains($searchText, 'running'),
+            str_contains($searchText, 'run'),
+            str_contains($searchText, 'winflo'),
+            str_contains($searchText, 'revolution'),
+            str_contains($searchText, 'structure'),
+            str_contains($searchText, 'infinity'),
+            str_contains($searchText, 'motiva') => '/images/placeholders/running.svg',
+            str_contains($searchText, 'metcon'),
+            str_contains($searchText, 'training'),
+            str_contains($searchText, 'free') => '/images/placeholders/training.svg',
+            str_contains($searchText, 'kids'),
+            str_contains($searchText, 'dynamo'),
+            str_contains($searchText, 'flex runner'),
+            str_contains($searchText, 'team hustle') => '/images/placeholders/kids.svg',
+            str_contains($searchText, 'women'),
+            str_contains($searchText, 'shadow'),
+            str_contains($searchText, 'cortez'),
+            str_contains($searchText, 'waffle'),
+            str_contains($searchText, 'tanjun') => '/images/placeholders/women.svg',
+            str_contains($searchText, 'clothing'),
+            str_contains($searchText, 'hoodie'),
+            str_contains($searchText, 'shorts'),
+            str_contains($searchText, 'tights'),
+            str_contains($searchText, 'fleece') => '/images/placeholders/apparel.svg',
+            default => '/images/placeholders/lifestyle.svg',
+        };
     }
 
     /**
@@ -1107,16 +1186,26 @@ class LiveProductSeeder extends Seeder
      */
     private function seedProductReviews(Product $product, array $data): void
     {
-        foreach ($this->reviewTemplates($data) as $review) {
+        ProductReview::query()
+            ->where('product_id', $product->id)
+            ->whereNull('user_id')
+            ->whereIn('author_name', ['Minh Anh', 'Quang Huy', 'Thanh Trúc'])
+            ->delete();
+
+        $reviewUsers = $this->reviewUsers();
+
+        foreach ($this->reviewTemplates($data) as $index => $review) {
+            $user = $reviewUsers[$index % count($reviewUsers)];
+
             ProductReview::updateOrCreate(
                 [
                     'product_id' => $product->id,
-                    'author_name' => $review['author_name'],
-                    'title' => $review['title'],
+                    'user_id' => $user->id,
                 ],
                 [
-                    'user_id' => null,
+                    'author_name' => $user->name,
                     'rating' => $review['rating'],
+                    'title' => $review['title'],
                     'comment' => $review['comment'],
                     'status' => 'approved',
                 ]
@@ -1125,42 +1214,85 @@ class LiveProductSeeder extends Seeder
     }
 
     /**
+     * @return array<int, User>
+     */
+    private function reviewUsers(): array
+    {
+        if ($this->reviewUsers !== null) {
+            return $this->reviewUsers;
+        }
+
+        $users = [
+            ['name' => 'Lan Anh', 'email' => 'review.lan-anh@example.test', 'avatar_url' => '/images/avatars/lan-anh.svg'],
+            ['name' => 'Minh Khôi', 'email' => 'review.minh-khoi@example.test', 'avatar_url' => '/images/avatars/minh-khoi.svg'],
+            ['name' => 'Gia Hân', 'email' => 'review.gia-han@example.test', 'avatar_url' => '/images/avatars/gia-han.svg'],
+            ['name' => 'Quốc Bảo', 'email' => 'review.quoc-bao@example.test', 'avatar_url' => '/images/avatars/quoc-bao.svg'],
+            ['name' => 'Hoàng Vy', 'email' => 'review.hoang-vy@example.test', 'avatar_url' => '/images/avatars/hoang-vy.svg'],
+            ['name' => 'Tuấn Minh', 'email' => 'review.tuan-minh@example.test', 'avatar_url' => '/images/avatars/tuan-minh.svg'],
+        ];
+
+        $this->reviewUsers = array_map(
+            fn (array $user): User => User::updateOrCreate(
+                ['email' => $user['email']],
+                [
+                    'name' => $user['name'],
+                    'password' => Hash::make('password'),
+                    'role' => 'customer',
+                    'avatar_url' => $user['avatar_url'],
+                ]
+            ),
+            $users
+        );
+
+        return $this->reviewUsers;
+    }
+
+    /**
      * @param  array<string, mixed>  $data
-     * @return array<int, array{author_name: string, rating: int, title: string, comment: string}>
+     * @return array<int, array{rating: int, title: string, comment: string}>
      */
     private function reviewTemplates(array $data): array
     {
         $name = (string) $data['name'];
         $category = strtolower((string) ($data['category'] ?? ''));
-        $tone = match ($data['type'] ?? 'shoes') {
-            'clothing' => 'mặc lên gọn, chất vải dễ chịu và hợp cả đi tập lẫn đi chơi.',
-            'accessories' => 'nhỏ gọn, dùng thực tế và phối cùng đồ thể thao rất ổn.',
+
+        $firstUse = match ($data['type'] ?? 'shoes') {
+            'clothing' => 'mặc đi tập buổi tối, vải đứng form nhưng không bị bí.',
+            'accessories' => 'đi cùng balo tập và đồ chạy bộ, dùng tiện hơn ảnh mô tả.',
             default => match ($category) {
-                'running' => 'êm chân, thoáng và ổn định cho lịch chạy sau giờ làm.',
-                'basketball' => 'bám sân tốt, đổi hướng tự tin và nhìn rất nổi khi lên chân.',
-                'training' => 'đế chắc, khóa chân tốt và hợp những buổi tập nặng.',
-                default => 'dễ phối đồ, form đẹp và mang cả ngày vẫn thoải mái.',
+                'running' => 'chạy 5km sau giờ làm, đệm phản hồi rõ và gót không bị cấn.',
+                'basketball' => 'đánh sân trong nhà, đổi hướng chắc chân và cổ giày ôm vừa đủ.',
+                'training' => 'tập deadlift nhẹ với circuit, đế ổn định và không bị trượt.',
+                default => 'đi làm rồi ghé cà phê, form gọn và dễ phối với quần tối màu.',
+            },
+        };
+
+        $fitNote = match ($data['type'] ?? 'shoes') {
+            'clothing' => 'Size đúng bảng, ai thích mặc rộng có thể tăng một size.',
+            'accessories' => 'Khóa kéo và ngăn phụ hoạt động ổn, không có cảm giác ọp ẹp.',
+            default => match ($category) {
+                'running' => 'Mũi giày thoáng, nên chọn đúng size thường mang nếu bàn chân không quá bè.',
+                'basketball' => 'Cần break-in khoảng một buổi, sau đó phần upper mềm hơn rõ.',
+                'training' => 'Ôm mu bàn chân tốt, dây giữ chắc khi chuyển bài nhanh.',
+                default => 'Size khá true-to-size, phần cổ không cọ gót khi đi lâu.',
             },
         };
 
         return [
             [
-                'author_name' => 'Minh Anh',
                 'rating' => 5,
-                'title' => 'Đáng tiền trong tầm giá',
-                'comment' => "{$name} {$tone} Size đúng với bảng Nike, nên chọn size thường mang.",
+                'title' => 'Trải nghiệm đúng kỳ vọng',
+                'comment' => "Mình dùng {$name} để {$firstUse} {$fitNote}",
             ],
             [
-                'author_name' => 'Quang Huy',
                 'rating' => 4,
-                'title' => 'Form đẹp, dễ dùng',
-                'comment' => "Mình thích cách {$name} cân bằng giữa kiểu dáng và sự tiện dụng. Đóng gói ổn, sản phẩm đúng mô tả.",
+                'title' => 'Chi tiết hoàn thiện tốt',
+                'comment' => "{$name} lên chân đẹp hơn ảnh catalog, đường may đều và màu ngoài thực tế dễ mặc. Điểm mình thích nhất là cảm giác chắc nhưng không nặng.",
             ],
             [
-                'author_name' => 'Thanh Trúc',
                 'rating' => 5,
-                'title' => 'Phối đồ rất nhanh',
-                'comment' => "{$name} hợp với quần jeans, jogger và đồ tập. Màu ngoài thực tế dễ mang hơn mình nghĩ.",
+                'title' => 'Hợp nhu cầu hằng ngày',
+                'comment' => "Sau một tuần dùng {$name}, mình thấy sản phẩm hợp lịch di chuyển liên tục. Dễ vệ sinh, ít bám bụi và vẫn giữ form sau vài lần mang.",
             ],
         ];
     }

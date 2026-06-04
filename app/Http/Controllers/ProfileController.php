@@ -21,6 +21,17 @@ class ProfileController extends Controller
 
         $wishlistProducts = $user->wishlistProducts()->latest()->get();
 
-        return view('profile.index', compact('user', 'orders', 'wishlistProducts'));
+        $supportTickets = $user->supportTickets()
+            ->with('resolver')
+            ->latest()
+            ->get();
+
+        $marketplaceListings = $user->marketplaceListings()
+            ->withTrashed()
+            ->with(['variant.product.category'])
+            ->latest()
+            ->get();
+
+        return view('profile.index', compact('user', 'orders', 'wishlistProducts', 'supportTickets', 'marketplaceListings'));
     }
 }

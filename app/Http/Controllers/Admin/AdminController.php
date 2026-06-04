@@ -48,7 +48,7 @@ class AdminController extends Controller
             ->groupBy('status')
             ->pluck('count', 'status')
             ->toArray();
-        $marketplaceStatuses = ['pending', 'active', 'rejected', 'sold'];
+        $marketplaceStatuses = ['pending', 'active', 'rejected', 'sold', 'hidden', 'deleted'];
         foreach ($marketplaceStatuses as $status) {
             if (! isset($marketplaceStats[$status])) {
                 $marketplaceStats[$status] = 0;
@@ -100,6 +100,16 @@ class AdminController extends Controller
             ->paginate(15);
 
         return view('admin.marketplace.index', compact('listings'));
+    }
+
+    /**
+     * Preview a marketplace listing before moderation.
+     */
+    public function marketplaceShow(MarketplaceListing $listing): View
+    {
+        $listing->load(['user', 'variant.product.category']);
+
+        return view('admin.marketplace.show', compact('listing'));
     }
 
     /**

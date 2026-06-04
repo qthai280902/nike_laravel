@@ -34,7 +34,7 @@ class ProductFactory extends Factory
             ],
             'care_instructions' => fake()->paragraph(),
             'price' => fake()->randomFloat(2, 50, 300),
-            'image_url' => '/images/hero.png',
+            'image_url' => '/images/placeholders/lifestyle.svg',
             'status' => 'active',
         ];
     }

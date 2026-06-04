@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="Kids product image">
+  <rect width="1024" height="1024" fill="#fffbea"/>
+  <circle cx="168" cy="220" r="62" fill="#facc15"/>
+  <circle cx="824" cy="204" r="78" fill="#38bdf8" opacity=".45"/>
+  <circle cx="738" cy="802" r="96" fill="#fb7185" opacity=".35"/>
+  <path d="M172 606c112-80 212-120 300-120 104 0 162 38 236 44 58 4 104-10 140-38 18 50 4 102-42 140-72 58-214 70-390 50-108-12-188-38-244-76z" fill="#111"/>
+  <path d="M248 578c76-38 148-56 216-56 66 0 120 18 162 38-78 18-168 24-270 14-38-2-74-2-108 4z" fill="#fff"/>
+  <path d="M304 674h468c-18 50-58 74-120 74H340c-36-12-48-36-36-74z" fill="#38bdf8"/>
+  <text x="72" y="166" fill="#111" font-family="Arial, sans-serif" font-size="78" font-weight="900">KIDS</text>
+</svg>

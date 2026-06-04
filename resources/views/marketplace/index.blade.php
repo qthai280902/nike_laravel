@@ -25,6 +25,39 @@
             </div>
         @endif
 
+        @if(isset($myListings) && $myListings->isNotEmpty())
+            <div class="mb-10 border border-nike-gray-150 bg-nike-snow p-5">
+                <div class="mb-4 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+                    <div>
+                        <p class="text-[10px] font-black uppercase tracking-[0.24em] text-nike-gray-400">Tin của bạn</p>
+                        <h2 class="mt-1 text-2xl font-black uppercase tracking-tight text-nike-black">Theo dõi trạng thái C2C</h2>
+                    </div>
+                    <a href="{{ route('profile.index') }}" class="text-[10px] font-black uppercase tracking-widest text-nike-black underline underline-offset-4">
+                        Xem hồ sơ
+                    </a>
+                </div>
+                <div class="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-5">
+                    @foreach($myListings as $myListing)
+                        <article class="border border-nike-gray-150 bg-white p-3">
+                            <div class="mb-3 aspect-square overflow-hidden bg-nike-snow">
+                                <img src="{{ $myListing->display_image_url }}" onerror="this.onerror=null; this.src='{{ asset('images/hero.png') }}'" class="h-full w-full object-cover" alt="{{ $myListing->display_name }}">
+                            </div>
+                            <p class="line-clamp-1 text-[11px] font-black uppercase text-nike-black">{{ $myListing->display_name }}</p>
+                            <div class="mt-3 flex flex-wrap gap-2 text-[9px] font-black uppercase tracking-widest">
+                                <span class="bg-nike-black px-2 py-1 text-white">{{ $myListing->owner_status_label }}</span>
+                                <span class="border border-nike-gray-150 px-2 py-1 text-nike-gray-500">{{ $myListing->created_at->format('d/m/Y') }}</span>
+                            </div>
+                            @if(! $myListing->trashed())
+                                <a href="{{ route('marketplace.show', $myListing) }}" class="mt-3 inline-flex text-[10px] font-black uppercase tracking-widest text-nike-black underline underline-offset-4">
+                                    Xem tin
+                                </a>
+                            @endif
+                        </article>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             @forelse($listings as $listing)
                 <article class="group flex h-full flex-col border border-nike-gray-150 bg-white">

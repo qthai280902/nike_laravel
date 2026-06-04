@@ -33,6 +33,8 @@ class SupportTicketController extends Controller
      */
     public function show(SupportTicket $ticket): View
     {
+        $ticket->load(['user', 'resolver']);
+
         return view('admin.support.show', compact('ticket'));
     }
 
@@ -48,6 +50,14 @@ class SupportTicketController extends Controller
             'status.required' => 'Vui lòng chọn trạng thái.',
             'status.in' => 'Trạng thái không hợp lệ.',
         ]);
+
+        if (in_array($validated['status'], ['resolved', 'closed'], true)) {
+            $validated['resolved_at'] = $ticket->resolved_at ?? now();
+            $validated['resolved_by_user_id'] = $request->user()->id;
+        } else {
+            $validated['resolved_at'] = null;
+            $validated['resolved_by_user_id'] = null;
+        }
 
         $ticket->update($validated);
 

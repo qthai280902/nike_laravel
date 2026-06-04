@@ -30,8 +30,12 @@
   }
 
   html[data-theme='dark'] body {
-    background: #0f0f0f;
-    color: #f5f5f5;
+    background: #0f0f0f !important;
+    color: #f5f5f5 !important;
+  }
+
+  html[data-theme='dark'] {
+    color-scheme: dark;
   }
 }
 
@@ -47,6 +51,19 @@
     background-color: #121212 !important;
   }
 
+  html[data-theme='dark'] header.bg-white\/90,
+  html[data-theme='dark'] [data-theme-menu-panel],
+  html[data-theme='dark'] #search-suggestions {
+    background-color: rgb(18 18 18 / 0.96) !important;
+    border-color: #2a2a2a !important;
+  }
+
+  html[data-theme='dark'] .theme-toggle-button {
+    background-color: #121212 !important;
+    border-color: #333333 !important;
+    color: #f5f5f5 !important;
+  }
+
   html[data-theme='dark'] .bg-nike-snow,
   html[data-theme='dark'] .bg-nike-gray-50,
   html[data-theme='dark'] .bg-nike-gray-100,
@@ -55,8 +72,23 @@
     background-color: #1b1b1b !important;
   }
 
+  html[data-theme='dark'] .bg-red-50,
+  html[data-theme='dark'] .bg-rose-50,
+  html[data-theme='dark'] .hover\:bg-red-50:hover {
+    background-color: rgb(127 29 29 / 0.22) !important;
+  }
+
+  html[data-theme='dark'] .bg-green-50,
+  html[data-theme='dark'] .bg-emerald-50 {
+    background-color: rgb(20 83 45 / 0.22) !important;
+  }
+
   html[data-theme='dark'] .text-nike-black {
     color: #f5f5f5 !important;
+  }
+
+  html[data-theme='dark'] .hover\:text-nike-black:hover {
+    color: #ffffff !important;
   }
 
   html[data-theme='dark'] .text-nike-gray-600,
@@ -73,10 +105,24 @@
   html[data-theme='dark'] .border-nike-gray-100,
   html[data-theme='dark'] .border-nike-gray-150,
   html[data-theme='dark'] .border-nike-gray-200,
+  html[data-theme='dark'] .border-nike-black,
   html[data-theme='dark'] .border-y,
   html[data-theme='dark'] .border-t,
   html[data-theme='dark'] .border-b {
     border-color: #2a2a2a !important;
+  }
+
+  html[data-theme='dark'] .hover\:border-nike-black:hover,
+  html[data-theme='dark'] .focus\:border-nike-black:focus {
+    border-color: #f5f5f5 !important;
+  }
+
+  html[data-theme='dark'] .divide-y > :not([hidden]) ~ :not([hidden]) {
+    border-color: #2a2a2a !important;
+  }
+
+  html[data-theme='dark'] .ring-white {
+    --tw-ring-color: #262626 !important;
   }
 
   html[data-theme='dark'] input,
@@ -94,6 +140,15 @@
 
   html[data-theme='dark'] .shadow-2xl {
     box-shadow: 0 24px 80px rgb(0 0 0 / 0.55) !important;
+  }
+
+  html[data-theme='dark'] table thead tr,
+  html[data-theme='dark'] .hover\:bg-nike-snow:hover {
+    background-color: #181818 !important;
+  }
+
+  html[data-theme='dark'] .prose {
+    color: #d4d4d4 !important;
   }
 
   html[data-theme='dark'] a.bg-nike-black,

@@ -18,7 +18,21 @@ class SupportTicket extends Model
         'message',
         'status',
         'admin_note',
+        'resolved_at',
+        'resolved_by_user_id',
     ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'resolved_at' => 'datetime',
+        ];
+    }
 
     /**
      * Get the user that owns the support ticket.
@@ -26,6 +40,14 @@ class SupportTicket extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the admin user that resolved or closed the support ticket.
+     */
+    public function resolver(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'resolved_by_user_id');
     }
 
     /**

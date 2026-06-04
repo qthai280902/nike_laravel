@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class MarketplaceListing extends Model
 {
@@ -23,6 +25,7 @@ class MarketplaceListing extends Model
         'size',
         'color',
         'image_url',
+        'image_path',
         'asking_price',
         'condition',
         'seller_description',
@@ -98,6 +101,10 @@ class MarketplaceListing extends Model
      */
     public function getDisplayImageUrlAttribute(): string
     {
+        if ($this->image_path) {
+            return Storage::disk('public')->url($this->image_path);
+        }
+
         $imageUrl = $this->image_url ?: $this->variant?->product?->image_url;
 
         if (empty($imageUrl)) {
@@ -153,5 +160,38 @@ class MarketplaceListing extends Model
         return $this->status instanceof MarketplaceListingStatus
             ? $this->status->label()
             : MarketplaceListingStatus::tryFrom((string) $this->status)?->label() ?? 'Không xác định';
+    }
+
+    /**
+     * Status label from the seller's point of view, including soft-deleted rows.
+     */
+    public function getOwnerStatusLabelAttribute(): string
+    {
+        if ($this->trashed()) {
+            return MarketplaceListingStatus::Deleted->label();
+        }
+
+        return $this->status_label;
+    }
+
+    /**
+     * Timestamp relevant to the seller-visible listing status.
+     */
+    public function getStatusChangedAtAttribute(): ?Carbon
+    {
+        if ($this->trashed()) {
+            return $this->deleted_at;
+        }
+
+        if (in_array($this->status, [
+            MarketplaceListingStatus::Active,
+            MarketplaceListingStatus::Rejected,
+            MarketplaceListingStatus::Sold,
+            MarketplaceListingStatus::Hidden,
+        ], true)) {
+            return $this->updated_at;
+        }
+
+        return $this->created_at;
     }
 }

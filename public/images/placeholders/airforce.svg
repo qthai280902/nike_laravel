@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="Air Force product image">
+  <rect width="1024" height="1024" fill="#f7f7f7"/>
+  <rect x="96" y="112" width="832" height="800" fill="#ffffff"/>
+  <path d="M162 594c124-92 244-136 368-136 96 0 160 42 232 48 54 4 96-8 136-34 18 48 4 102-38 142-72 68-230 82-444 62-108-10-192-36-254-82z" fill="#111"/>
+  <path d="M236 564c84-42 166-62 254-62 74 0 126 18 184 40-80 18-172 26-276 24-54 0-108 0-162-2z" fill="#f7f7f7"/>
+  <path d="M282 662h518c-18 50-58 76-120 76H320c-40-10-54-36-38-76z" fill="#f7f7f7"/>
+  <path d="M366 708h268" stroke="#111" stroke-width="18" stroke-linecap="round"/>
+  <text x="72" y="166" fill="#111" font-family="Arial, sans-serif" font-size="68" font-weight="900">AIR FORCE</text>
+</svg>

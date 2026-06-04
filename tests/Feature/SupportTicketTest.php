@@ -134,6 +134,101 @@ class SupportTicketTest extends TestCase
     }
 
     #[Test]
+    public function admin_resolution_sets_resolved_timestamp_and_resolver(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $ticket = SupportTicket::create([
+            'name' => 'Member Support',
+            'email' => 'member@example.com',
+            'subject' => 'Can doi size',
+            'message' => 'Can shop ho tro doi size.',
+            'status' => 'open',
+        ]);
+
+        $this->actingAs($admin)->patch(route('admin.support.update', $ticket), [
+            'status' => 'resolved',
+            'admin_note' => 'Đã hướng dẫn đổi size.',
+        ])->assertRedirect(route('admin.support.show', $ticket));
+
+        $ticket->refresh();
+
+        $this->assertSame('resolved', $ticket->status);
+        $this->assertNotNull($ticket->resolved_at);
+        $this->assertSame($admin->id, $ticket->resolved_by_user_id);
+
+        $this->actingAs($admin)
+            ->get(route('admin.support.show', $ticket))
+            ->assertOk()
+            ->assertSee('Đã hướng dẫn đổi size.')
+            ->assertSee($admin->name);
+    }
+
+    #[Test]
+    public function reopening_support_ticket_clears_resolution_metadata(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $ticket = SupportTicket::create([
+            'name' => 'Member Support',
+            'email' => 'member@example.com',
+            'subject' => 'Can mo lai ticket',
+            'message' => 'Ticket can xu ly tiep.',
+            'status' => 'resolved',
+            'resolved_at' => now(),
+            'resolved_by_user_id' => $admin->id,
+        ]);
+
+        $this->actingAs($admin)->patch(route('admin.support.update', $ticket), [
+            'status' => 'in_progress',
+            'admin_note' => 'Mở lại để xử lý tiếp.',
+        ])->assertRedirect(route('admin.support.show', $ticket));
+
+        $ticket->refresh();
+
+        $this->assertSame('in_progress', $ticket->status);
+        $this->assertNull($ticket->resolved_at);
+        $this->assertNull($ticket->resolved_by_user_id);
+    }
+
+    #[Test]
+    public function profile_shows_only_current_users_support_history_with_resolution(): void
+    {
+        $user = User::factory()->create(['name' => 'Support Owner']);
+        $otherUser = User::factory()->create();
+        $admin = User::factory()->create(['role' => 'admin', 'name' => 'Support Admin']);
+
+        SupportTicket::create([
+            'user_id' => $user->id,
+            'name' => 'Support Owner',
+            'email' => 'owner@example.com',
+            'subject' => 'Đổi size Pegasus',
+            'message' => 'Mình muốn đổi sang size US 10.',
+            'status' => 'resolved',
+            'admin_note' => 'Đã xác nhận đổi size.',
+            'resolved_at' => now(),
+            'resolved_by_user_id' => $admin->id,
+        ]);
+
+        SupportTicket::create([
+            'user_id' => $otherUser->id,
+            'name' => 'Other User',
+            'email' => 'other@example.com',
+            'subject' => 'Ticket không thuộc user',
+            'message' => 'Không được hiện ở profile này.',
+            'status' => 'open',
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('profile.index'))
+            ->assertOk()
+            ->assertSee('Lịch sử hỗ trợ')
+            ->assertSee('Đổi size Pegasus')
+            ->assertSee('Đã xác nhận đổi size.')
+            ->assertSee('Support Admin')
+            ->assertDontSee('Ticket không thuộc user')
+            ->assertDontSee('Không được hiện ở profile này.');
+    }
+
+    #[Test]
     public function customer_cannot_access_admin_support_routes(): void
     {
         $customer = User::factory()->create(['role' => 'customer']);

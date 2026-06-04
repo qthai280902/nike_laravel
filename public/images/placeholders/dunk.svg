@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="Dunk product image">
+  <rect width="1024" height="1024" fill="#111"/>
+  <rect x="124" y="124" width="776" height="776" fill="#f5f5f5"/>
+  <path d="M176 606c112-90 216-134 328-134 108 0 168 42 252 48 56 4 100-12 134-44 16 50 2 104-42 144-74 66-236 80-436 58-102-12-180-36-236-72z" fill="#111"/>
+  <path d="M240 574c92-48 174-68 252-66 68 2 128 22 176 44-96 22-204 28-328 18-38-2-70-2-100 4z" fill="#ffffff"/>
+  <path d="M282 668h516c-18 52-58 76-120 76H324c-42-10-56-36-42-76z" fill="#111"/>
+  <path d="M354 718h286" stroke="#ffffff" stroke-width="18" stroke-linecap="round"/>
+  <text x="72" y="166" fill="#111" font-family="Arial, sans-serif" font-size="78" font-weight="900">DUNK</text>
+</svg>

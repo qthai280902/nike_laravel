@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="Basketball product image">
+  <rect width="1024" height="1024" fill="#fff4ed"/>
+  <circle cx="792" cy="260" r="158" fill="#f97316" opacity=".22"/>
+  <path d="M672 116c34 86 34 178 0 276M912 252c-80 8-158 48-234 120" fill="none" stroke="#f97316" stroke-width="22" opacity=".5"/>
+  <path d="M162 606c118-96 232-142 342-136 104 6 168 50 246 54 58 2 104-18 142-56 24 56 8 118-44 162-72 60-226 72-424 52-110-12-198-38-262-76z" fill="#111"/>
+  <path d="M244 576c82-48 170-68 264-64 72 4 128 24 170 46-104 22-218 26-342 12-32-4-62-2-92 6z" fill="#fff"/>
+  <path d="M304 674h488c-18 58-64 88-138 88H338c-34-14-46-44-34-88z" fill="#f97316"/>
+  <text x="72" y="166" fill="#111" font-family="Arial, sans-serif" font-size="64" font-weight="900">BASKETBALL</text>
+</svg>

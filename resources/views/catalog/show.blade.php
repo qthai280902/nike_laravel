@@ -8,10 +8,13 @@
         $highlights = collect($product->highlights ?? [])->filter()->values();
         $reviewCount = (int) ($product->approved_reviews_count ?? $product->approvedReviews->count());
         $averageRating = $product->approved_reviews_avg_rating ? number_format((float) $product->approved_reviews_avg_rating, 1) : null;
+        $viewerReview = $viewerReview ?? null;
+        $reviewStatusLabels = [
+            'pending' => 'Đang chờ duyệt',
+            'approved' => 'Đã duyệt',
+            'rejected' => 'Đã từ chối',
+        ];
     @endphp
-
-    </div>
-</div>
 
 {{-- SIZE GUIDE MODAL --}}
 <div id="size-guide-modal" class="fixed inset-0 z-[9999] flex items-center justify-center hidden">
@@ -186,13 +189,105 @@
             </div>
         </div>
 
+        <div class="mb-8 border border-nike-gray-150 bg-white p-5 md:p-6">
+            @auth
+                @if($viewerReview)
+                    <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                        <div>
+                            <p class="text-sm font-black uppercase text-nike-black">Bạn đã gửi đánh giá cho sản phẩm này.</p>
+                            <p class="mt-1 text-xs font-bold uppercase tracking-widest text-nike-gray-400">
+                                Trạng thái: {{ $reviewStatusLabels[$viewerReview->status] ?? $viewerReview->status }}
+                            </p>
+                        </div>
+                        <span class="inline-flex rounded-full bg-nike-black px-5 py-3 text-[10px] font-black uppercase tracking-widest text-white">
+                            {{ $viewerReview->rating }}/5
+                        </span>
+                    </div>
+                @else
+                    <form action="{{ route('products.reviews.store', $product) }}" method="POST" class="grid grid-cols-1 gap-4 md:grid-cols-12">
+                        @csrf
+                        <div class="md:col-span-3">
+                            <label for="rating" class="mb-2 block text-[10px] font-black uppercase tracking-widest text-nike-gray-400">Điểm</label>
+                            <select id="rating" name="rating" required class="w-full border border-nike-gray-200 bg-nike-snow px-4 py-3 text-sm font-black uppercase tracking-widest text-nike-black outline-none focus:border-nike-black">
+                                @for($rating = 5; $rating >= 1; $rating--)
+                                    <option value="{{ $rating }}" @selected((int) old('rating', 5) === $rating)>{{ $rating }}/5</option>
+                                @endfor
+                            </select>
+                            @error('rating')
+                                <p class="mt-2 text-xs font-bold uppercase tracking-widest text-nike-red">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div class="md:col-span-9">
+                            <label for="title" class="mb-2 block text-[10px] font-black uppercase tracking-widest text-nike-gray-400">Tiêu đề</label>
+                            <input id="title" name="title" value="{{ old('title') }}" maxlength="120" placeholder="Cảm nhận ngắn"
+                                class="w-full border border-nike-gray-200 bg-nike-snow px-4 py-3 text-sm font-bold text-nike-black outline-none focus:border-nike-black">
+                            @error('title')
+                                <p class="mt-2 text-xs font-bold uppercase tracking-widest text-nike-red">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div class="md:col-span-12">
+                            <label for="comment" class="mb-2 block text-[10px] font-black uppercase tracking-widest text-nike-gray-400">Nhận xét</label>
+                            <textarea id="comment" name="comment" required rows="4" maxlength="1500" placeholder="Chia sẻ trải nghiệm thật của bạn"
+                                class="w-full border border-nike-gray-200 bg-nike-snow p-4 text-sm font-medium leading-relaxed text-nike-black outline-none focus:border-nike-black">{{ old('comment') }}</textarea>
+                            @error('comment')
+                                <p class="mt-2 text-xs font-bold uppercase tracking-widest text-nike-red">{{ $message }}</p>
+                            @enderror
+                            @error('review')
+                                <p class="mt-2 text-xs font-bold uppercase tracking-widest text-nike-red">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div class="md:col-span-12">
+                            <button type="submit" class="inline-flex rounded-full bg-nike-black px-8 py-4 text-xs font-black uppercase tracking-[0.24em] text-white transition hover:bg-nike-gray-800">
+                                Gửi đánh giá
+                            </button>
+                        </div>
+                    </form>
+                @endif
+            @else
+                <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                    <div>
+                        <p class="text-sm font-black uppercase text-nike-black">Đăng nhập để viết đánh giá thật.</p>
+                        <p class="mt-1 text-xs font-bold uppercase tracking-widest text-nike-gray-400">Đánh giá sau khi gửi sẽ chờ duyệt trước khi hiển thị.</p>
+                    </div>
+                    <a href="{{ route('login') }}" class="inline-flex justify-center rounded-full bg-nike-black px-8 py-4 text-xs font-black uppercase tracking-widest text-white">
+                        Đăng nhập
+                    </a>
+                </div>
+            @endauth
+        </div>
+
         <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
             @forelse($product->approvedReviews as $review)
+                @php
+                    $reviewUser = $review->user;
+                    $reviewAvatarUrl = $reviewUser?->avatar_display_url;
+                    $reviewInitials = $reviewUser?->initials ?? strtoupper(Str::substr($review->author_name ?: 'NH', 0, 2));
+                @endphp
                 <article class="border border-nike-gray-150 bg-white p-5">
                     <div class="flex items-start justify-between gap-4">
-                        <div>
-                            <p class="text-sm font-black uppercase leading-tight text-nike-black">{{ $review->title ?: 'Đánh giá sản phẩm' }}</p>
-                            <p class="mt-1 text-[10px] font-bold uppercase tracking-widest text-nike-gray-400">{{ $review->author_name }}</p>
+                        <div class="flex min-w-0 gap-3">
+                            @if($reviewUser)
+                                <a href="{{ route('users.show', $reviewUser) }}" class="h-11 w-11 shrink-0 overflow-hidden rounded-full bg-nike-black text-white">
+                                    @if($reviewAvatarUrl)
+                                        <img src="{{ $reviewAvatarUrl }}" alt="{{ $reviewUser->name }}" class="h-full w-full object-cover">
+                                    @else
+                                        <span class="flex h-full w-full items-center justify-center text-[11px] font-black uppercase">{{ $reviewInitials }}</span>
+                                    @endif
+                                </a>
+                            @else
+                                <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-nike-black text-[11px] font-black uppercase text-white">{{ $reviewInitials }}</span>
+                            @endif
+                            <div class="min-w-0">
+                                <p class="text-sm font-black uppercase leading-tight text-nike-black">{{ $review->title ?: 'Đánh giá sản phẩm' }}</p>
+                                @if($reviewUser)
+                                    <a href="{{ route('users.show', $reviewUser) }}" class="mt-1 inline-flex text-[10px] font-bold uppercase tracking-widest text-nike-gray-400 underline-offset-4 hover:underline">
+                                        {{ $review->author_name }}
+                                    </a>
+                                @else
+                                    <p class="mt-1 text-[10px] font-bold uppercase tracking-widest text-nike-gray-400">{{ $review->author_name }}</p>
+                                @endif
+                                <p class="mt-1 text-[10px] font-bold uppercase tracking-widest text-nike-gray-400">{{ $review->created_at?->format('d/m/Y H:i') }}</p>
+                            </div>
                         </div>
                         <span class="shrink-0 text-sm font-black text-nike-black">{{ $review->rating }}/5</span>
                     </div>

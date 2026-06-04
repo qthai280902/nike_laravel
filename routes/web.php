@@ -15,8 +15,10 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MarketplaceController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductReviewController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SupportController;
+use App\Http\Controllers\UserPublicProfileController;
 use App\Http\Controllers\WishlistController;
 use Illuminate\Support\Facades\Route;
 
@@ -32,8 +34,11 @@ Route::prefix('catalog')->group(function () {
     Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
     Route::get('/products', [ProductController::class, 'index'])->name('catalog.index');
     Route::get('/products/{slug}', [ProductController::class, 'show'])->name('catalog.show');
+    Route::post('/products/{product}/reviews', [ProductReviewController::class, 'store'])->middleware('auth')->name('products.reviews.store');
     Route::get('/search/suggestions', [ProductController::class, 'searchSuggestions'])->name('search.suggestions');
 });
+
+Route::get('/users/{user}', [UserPublicProfileController::class, 'show'])->name('users.show');
 
 // Storefront Support Routes
 Route::get('/support', [SupportController::class, 'create'])->name('support.create');
@@ -75,6 +80,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
         Route::get('/marketplace', [AdminController::class, 'marketplaceIndex'])->name('marketplace.index');
+        Route::get('/marketplace/{listing}', [AdminController::class, 'marketplaceShow'])->name('marketplace.show');
         Route::patch('/marketplace/{listing}/{status}', [AdminController::class, 'updateListingStatus'])->name('marketplace.update');
         Route::get('/storefront', [StorefrontController::class, 'index'])->name('storefront.index');
         Route::patch('/storefront/{product}', [StorefrontController::class, 'updateFeaturedPosition'])->name('storefront.update');

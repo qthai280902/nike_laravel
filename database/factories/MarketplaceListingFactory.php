@@ -29,6 +29,7 @@ class MarketplaceListingFactory extends Factory
             'size' => null,
             'color' => null,
             'image_url' => null,
+            'image_path' => null,
             'asking_price' => fake()->numberBetween(500000, 5000000),
             'condition' => fake()->randomElement(MarketplaceListingCondition::cases()),
             'seller_description' => fake()->sentence(),

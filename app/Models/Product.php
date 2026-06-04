@@ -101,6 +101,11 @@ class Product extends Model
 
         $normalizedValue = strtolower($value);
 
+        if (str_starts_with($normalizedValue, '/images/placeholders/')
+            || str_starts_with($normalizedValue, 'images/placeholders/')) {
+            return false;
+        }
+
         return str_contains($normalizedValue, 'images.unsplash.com')
             || str_contains($normalizedValue, 'placeholder')
             || str_contains($normalizedValue, 'images.nike.com');

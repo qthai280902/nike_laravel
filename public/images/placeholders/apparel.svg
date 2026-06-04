@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="Apparel product image">
+  <rect width="1024" height="1024" fill="#f5f5f5"/>
+  <path d="M350 238h324l116 104-88 120-54-42v364H376V420l-54 42-88-120 116-104z" fill="#111"/>
+  <path d="M426 238c8 58 42 88 86 88s78-30 86-88" fill="none" stroke="#f5f5f5" stroke-width="30"/>
+  <path d="M376 520h272" stroke="#f5f5f5" stroke-width="26" stroke-linecap="round"/>
+  <path d="M376 606h218" stroke="#f5f5f5" stroke-width="26" stroke-linecap="round"/>
+  <text x="72" y="166" fill="#111" font-family="Arial, sans-serif" font-size="76" font-weight="900">APPAREL</text>
+</svg>

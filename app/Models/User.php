@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
@@ -26,6 +27,7 @@ class User extends Authenticatable
         'password',
         'display_id',
         'role',
+        'avatar_url',
     ];
 
     /**
@@ -76,6 +78,22 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the product reviews written by the user.
+     */
+    public function productReviews(): HasMany
+    {
+        return $this->hasMany(ProductReview::class);
+    }
+
+    /**
+     * Get the support tickets submitted by the user.
+     */
+    public function supportTickets(): HasMany
+    {
+        return $this->hasMany(SupportTicket::class);
+    }
+
+    /**
      * The products that the user has wishlisted.
      */
     public function wishlistProducts(): BelongsToMany
@@ -89,5 +107,36 @@ class User extends Authenticatable
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
+    }
+
+    /**
+     * Get a browser-ready avatar URL when one has been configured.
+     */
+    public function getAvatarDisplayUrlAttribute(): ?string
+    {
+        if (! $this->avatar_url) {
+            return null;
+        }
+
+        if (str_starts_with($this->avatar_url, 'http://') || str_starts_with($this->avatar_url, 'https://')) {
+            return $this->avatar_url;
+        }
+
+        return asset(ltrim($this->avatar_url, '/'));
+    }
+
+    /**
+     * Get compact initials for avatar fallbacks.
+     */
+    public function getInitialsAttribute(): string
+    {
+        $initials = Str::of($this->name)
+            ->explode(' ')
+            ->filter()
+            ->take(2)
+            ->map(fn (string $part): string => Str::upper(Str::substr($part, 0, 1)))
+            ->implode('');
+
+        return $initials !== '' ? $initials : 'NH';
     }
 }

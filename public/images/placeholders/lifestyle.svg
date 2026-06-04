@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="Lifestyle product image">
+  <rect width="1024" height="1024" fill="#f4f4f5"/>
+  <path d="M84 830h856" stroke="#111" stroke-width="30" stroke-linecap="round" opacity=".08"/>
+  <path d="M174 610c124-88 240-130 350-128 92 2 154 38 228 44 58 4 104-12 140-46 18 52 2 108-46 150-78 66-236 80-436 54-104-14-182-38-236-74z" fill="#111"/>
+  <path d="M250 580c94-46 182-66 264-62 68 2 124 20 166 42-96 20-206 26-330 14-36-2-68 0-100 6z" fill="#fff"/>
+  <path d="M306 682h492c-22 54-66 80-132 80H340c-36-14-48-40-34-80z" fill="#737373"/>
+  <text x="72" y="166" fill="#111" font-family="Arial, sans-serif" font-size="72" font-weight="900">LIFESTYLE</text>
+</svg>

@@ -3,93 +3,112 @@
 @section('title', 'Hồ sơ thành viên | Nike Hybrid')
 
 @section('content')
-<section class="max-w-[1920px] mx-auto px-6 md:px-12 py-24">
-    <div class="max-w-4xl mx-auto">
-        {{-- Profile Header --}}
-        <div class="flex flex-col md:flex-row md:items-center justify-between mb-16 gap-6 bg-nike-snow p-8 border border-nike-gray-100">
-            <div>
-                <h1 class="text-nike-hero tracking-tighter leading-none mb-2">Hồ sơ.</h1>
-                <p class="text-nike-gray-500 font-medium tracking-tight uppercase text-xs">Chào mừng bạn trở lại hệ thống Nike Hybrid</p>
-            </div>
-            <div class="text-right">
-                <p class="text-nike-gray-300 font-nike-display text-[10px] uppercase tracking-[0.3em] font-black mb-1">Mã Thành Viên</p>
-                <p class="text-nike-black font-black text-4xl uppercase tracking-tighter">
-                    {{ $user->display_id ?? '#' . str_pad($user->id, 6, '0', STR_PAD_LEFT) }}
-                </p>
-            </div>
-        </div>
+@php
+    $avatarUrl = $user->avatar_display_url;
+    $memberCode = $user->display_id ?? '#' . str_pad((string) $user->id, 6, '0', STR_PAD_LEFT);
+    $roleLabel = match ($user->role) {
+        'customer' => 'Khách hàng',
+        'seller' => 'Người bán',
+        'admin' => 'Quản trị viên',
+        default => $user->role,
+    };
+@endphp
 
-        {{-- Tab Menu --}}
-        <div class="flex border-b border-nike-gray-200 mb-12 space-x-12 overflow-x-auto scrollbar-hide">
-            <button onclick="switchTab('details')" id="tab-btn-details" class="tab-btn pb-4 text-sm font-bold uppercase tracking-widest border-b-2 border-nike-black transition-all">
-                Thông tin chi tiết
-            </button>
-            <button onclick="switchTab('orders')" id="tab-btn-orders" class="tab-btn pb-4 text-sm font-bold uppercase tracking-widest border-b-2 border-transparent text-nike-gray-400 hover:text-nike-black transition-all">
-                Lịch sử mua hàng
-            </button>
-            <button onclick="switchTab('wishlist')" id="tab-btn-wishlist" class="tab-btn pb-4 text-sm font-bold uppercase tracking-widest border-b-2 border-transparent text-nike-gray-400 hover:text-nike-black transition-all">
-                Sản phẩm yêu thích
-            </button>
-        </div>
-
-        {{-- Tab Contents --}}
-        <div id="tab-content-details" class="tab-content">
-            <div class="space-y-12">
+<section class="mx-auto max-w-[1920px] px-6 py-16 md:px-12 md:py-24">
+    <div class="mx-auto max-w-5xl">
+        <div class="mb-12 flex flex-col gap-8 border border-nike-gray-100 bg-nike-snow p-6 md:flex-row md:items-center md:justify-between md:p-8">
+            <div class="flex items-center gap-5">
+                <div class="h-20 w-20 shrink-0 overflow-hidden rounded-full bg-nike-black text-white">
+                    @if($avatarUrl)
+                        <img src="{{ $avatarUrl }}" alt="{{ $user->name }}" class="h-full w-full object-cover">
+                    @else
+                        <span class="flex h-full w-full items-center justify-center text-xl font-black uppercase">{{ $user->initials }}</span>
+                    @endif
+                </div>
                 <div>
-                    <h2 class="text-3xl font-bold uppercase mb-8">Thông tin cá nhân</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 font-nike-body">
+                    <p class="mb-2 text-[10px] font-black uppercase tracking-[0.24em] text-nike-gray-400">Hồ sơ thành viên</p>
+                    <h1 class="text-4xl font-black uppercase leading-none tracking-tight text-nike-black md:text-6xl">{{ $user->name }}</h1>
+                    <p class="mt-3 text-xs font-bold uppercase tracking-widest text-nike-gray-500">Chào mừng bạn trở lại Nike Hybrid</p>
+                </div>
+            </div>
+            <div class="text-left md:text-right">
+                <p class="mb-1 text-[10px] font-black uppercase tracking-[0.3em] text-nike-gray-300">Mã thành viên</p>
+                <p class="text-3xl font-black uppercase tracking-tight text-nike-black md:text-4xl">{{ $memberCode }}</p>
+            </div>
+        </div>
+
+        <div class="mb-10 flex gap-8 overflow-x-auto border-b border-nike-gray-200">
+            <button onclick="switchTab('details')" id="tab-btn-details" class="tab-btn border-b-2 border-nike-black pb-4 text-sm font-bold uppercase tracking-widest transition-all">
+                Thông tin
+            </button>
+            <button onclick="switchTab('orders')" id="tab-btn-orders" class="tab-btn border-b-2 border-transparent pb-4 text-sm font-bold uppercase tracking-widest text-nike-gray-400 transition-all hover:text-nike-black">
+                Đơn hàng
+            </button>
+            <button onclick="switchTab('wishlist')" id="tab-btn-wishlist" class="tab-btn border-b-2 border-transparent pb-4 text-sm font-bold uppercase tracking-widest text-nike-gray-400 transition-all hover:text-nike-black">
+                Yêu thích
+            </button>
+            <button onclick="switchTab('support')" id="tab-btn-support" class="tab-btn border-b-2 border-transparent pb-4 text-sm font-bold uppercase tracking-widest text-nike-gray-400 transition-all hover:text-nike-black">
+                Hỗ trợ
+            </button>
+            <button onclick="switchTab('marketplace')" id="tab-btn-marketplace" class="tab-btn border-b-2 border-transparent pb-4 text-sm font-bold uppercase tracking-widest text-nike-gray-400 transition-all hover:text-nike-black">
+                C2C
+            </button>
+        </div>
+
+        <div id="tab-content-details" class="tab-content">
+            <div class="space-y-10">
+                <div>
+                    <h2 class="mb-8 text-3xl font-bold uppercase">Thông tin cá nhân</h2>
+                    <div class="grid grid-cols-1 gap-8 font-nike-body md:grid-cols-2">
                         <div>
-                            <p class="text-nike-gray-500 uppercase text-[10px] font-bold tracking-widest mb-1">Họ và Tên</p>
+                            <p class="mb-1 text-[10px] font-bold uppercase tracking-widest text-nike-gray-500">Họ và tên</p>
                             <p class="text-lg font-medium">{{ $user->name }}</p>
                         </div>
                         <div>
-                            <p class="text-nike-gray-500 uppercase text-[10px] font-bold tracking-widest mb-1">Địa chỉ Email</p>
+                            <p class="mb-1 text-[10px] font-bold uppercase tracking-widest text-nike-gray-500">Địa chỉ email</p>
                             <p class="text-lg font-medium">{{ $user->email }}</p>
                         </div>
                         <div>
-                            <p class="text-nike-gray-500 uppercase text-[10px] font-bold tracking-widest mb-1">Vai trò tài khoản</p>
-                            <p class="text-lg font-medium uppercase font-bold text-nike-red">{{ match($user->role) { 'customer' => 'Khách hàng', 'seller' => 'Người bán', 'admin' => 'Quản trị viên', default => $user->role } }}</p>
+                            <p class="mb-1 text-[10px] font-bold uppercase tracking-widest text-nike-gray-500">Vai trò tài khoản</p>
+                            <p class="text-lg font-bold uppercase text-nike-red">{{ $roleLabel }}</p>
                         </div>
                         <div>
-                            <p class="text-nike-gray-500 uppercase text-[10px] font-bold tracking-widest mb-1">Thành viên từ</p>
+                            <p class="mb-1 text-[10px] font-bold uppercase tracking-widest text-nike-gray-500">Thành viên từ</p>
                             <p class="text-lg font-medium">{{ $user->created_at->format('d/m/Y') }}</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
-                    @if(auth()->user()->role === 'admin')
-                        <a href="{{ route('admin.dashboard') }}" class="bg-nike-black text-white py-4 px-8 uppercase font-bold text-xs tracking-widest text-center rounded-full hover:bg-nike-gray-800 transition-all flex items-center justify-center">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                <div class="flex flex-col gap-3 md:flex-row">
+                    @if($user->role === 'admin')
+                        <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center justify-center rounded-full bg-nike-black px-8 py-4 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-nike-gray-800">
                             Quản lý hệ thống
                         </a>
                     @endif
-
-                    <x-pill-button class="bg-white text-nike-black border border-nike-gray-300 hover:bg-nike-gray-100 py-4 px-8 uppercase font-bold text-xs tracking-widest">
+                    <button type="button" class="inline-flex items-center justify-center rounded-full border border-nike-gray-300 bg-white px-8 py-4 text-xs font-bold uppercase tracking-widest text-nike-black transition hover:bg-nike-gray-100">
                         Chỉnh sửa hồ sơ
-                    </x-pill-button>
-                    
+                    </button>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <x-pill-button type="submit" class="bg-nike-red text-white hover:bg-red-800 py-4 px-8 uppercase font-bold text-xs tracking-widest">
+                        <button type="submit" class="inline-flex w-full items-center justify-center rounded-full bg-nike-red px-8 py-4 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-red-800 md:w-auto">
                             Đăng xuất
-                        </x-pill-button>
+                        </button>
                     </form>
                 </div>
             </div>
         </div>
 
         <div id="tab-content-orders" class="tab-content hidden">
-            <h2 class="text-3xl font-bold uppercase mb-8">Đơn hàng của tôi</h2>
+            <h2 class="mb-8 text-3xl font-bold uppercase">Đơn hàng của tôi</h2>
             @if($orders->isEmpty())
                 <p class="text-nike-gray-500">Bạn chưa có đơn hàng nào.</p>
             @else
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left font-nike-body border-collapse">
+                    <table class="w-full border-collapse text-left font-nike-body">
                         <thead>
-                            <tr class="bg-nike-gray-100 uppercase text-[10px] tracking-widest border-b border-nike-gray-200">
-                                <th class="px-6 py-4 font-black">Mã Đơn</th>
-                                <th class="px-6 py-4 font-black">Ngày Đặt</th>
+                            <tr class="border-b border-nike-gray-200 bg-nike-gray-100 text-[10px] uppercase tracking-widest">
+                                <th class="px-6 py-4 font-black">Mã đơn</th>
+                                <th class="px-6 py-4 font-black">Ngày đặt</th>
                                 <th class="px-6 py-4 font-black">Sản phẩm</th>
                                 <th class="px-6 py-4 font-black">Tổng cộng</th>
                                 <th class="px-6 py-4 font-black">Trạng thái</th>
@@ -97,19 +116,19 @@
                         </thead>
                         <tbody class="divide-y divide-nike-gray-100">
                             @foreach($orders as $order)
-                                <tr class="hover:bg-nike-snow transition-colors">
+                                <tr class="transition-colors hover:bg-nike-snow">
                                     <td class="px-6 py-6 font-bold">#{{ $order->id }}</td>
                                     <td class="px-6 py-6 text-nike-gray-500">{{ $order->created_at->format('d/m/Y') }}</td>
                                     <td class="px-6 py-6">
                                         <div class="flex -space-x-3 overflow-hidden">
                                             @foreach($order->items as $item)
-                                                <img src="{{ $item->variant?->product?->image_url ?? asset('images/hero.png') }}" onerror="this.onerror=null; this.src='{{ asset('images/hero.png') }}'" alt="Item" class="inline-block h-10 w-10 rounded-full ring-2 ring-white object-cover bg-nike-gray-100">
+                                                <img src="{{ $item->variant?->product?->image_url ?? asset('images/hero.png') }}" onerror="this.onerror=null; this.src='{{ asset('images/hero.png') }}'" alt="Item" class="inline-block h-10 w-10 rounded-full bg-nike-gray-100 object-cover ring-2 ring-white">
                                             @endforeach
                                         </div>
                                     </td>
-                                    <td class="px-6 py-6 font-black tracking-tighter">{{ number_format($order->total_price, 0, ',', '.') }}₫</td>
+                                    <td class="px-6 py-6 font-black tracking-tight">{{ number_format($order->total_price, 0, ',', '.') }}₫</td>
                                     <td class="px-6 py-6">
-                                        <span class="px-3 py-1 bg-nike-black text-white text-[9px] font-black uppercase tracking-widest">
+                                        <span class="bg-nike-black px-3 py-1 text-[9px] font-black uppercase tracking-widest text-white">
                                             {{ match($order->status) { 'pending' => 'Đang xử lý', 'paid' => 'Đã thanh toán', 'shipped' => 'Đang giao', 'delivered' => 'Đã giao', 'cancelled' => 'Đã hủy', default => $order->status } }}
                                         </span>
                                     </td>
@@ -122,45 +141,124 @@
         </div>
 
         <div id="tab-content-wishlist" class="tab-content hidden">
-            <h2 class="text-3xl font-bold uppercase mb-8">Danh sách yêu thích</h2>
+            <h2 class="mb-8 text-3xl font-bold uppercase">Danh sách yêu thích</h2>
             @if($wishlistProducts->isEmpty())
                 <p id="empty-wishlist-msg" class="text-nike-gray-500">Danh sách yêu thích của bạn đang trống.</p>
             @else
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-6" id="wishlist-grid">
+                <div class="grid grid-cols-2 gap-6 md:grid-cols-3" id="wishlist-grid">
                     @foreach($wishlistProducts as $product)
-                        <div id="wishlist-item-{{ $product->id }}" class="group relative bg-nike-snow border border-nike-gray-100 p-4 hover:shadow-xl transition-all">
-                            {{-- Delete Button --}}
-                            <button onclick="openWishlistDeleteModal('{{ $product->id }}')" class="absolute top-2 right-2 z-10 bg-white/80 backdrop-blur-sm text-nike-black p-1.5 rounded-full hover:bg-nike-red hover:text-white transition-all shadow-sm">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        <div id="wishlist-item-{{ $product->id }}" class="group relative border border-nike-gray-100 bg-nike-snow p-4 transition-all hover:shadow-xl">
+                            <button onclick="openWishlistDeleteModal('{{ $product->id }}')" class="absolute right-2 top-2 z-10 rounded-full bg-white/80 p-1.5 text-nike-black shadow-sm backdrop-blur-sm transition-all hover:bg-nike-red hover:text-white" title="Xóa khỏi yêu thích">
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                             </button>
-
                             <a href="{{ route('catalog.show', $product->slug) }}" class="block">
-                                <div class="aspect-square bg-nike-gray-100 mb-4 overflow-hidden">
-                                    <img src="{{ $product->image_url }}" onerror="this.onerror=null; this.src='{{ asset('images/hero.png') }}'" alt="{{ $product->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                <div class="mb-4 aspect-square overflow-hidden bg-nike-gray-100">
+                                    <img src="{{ $product->image_url }}" onerror="this.onerror=null; this.src='{{ asset('images/hero.png') }}'" alt="{{ $product->name }}" class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105">
                                 </div>
                                 <p class="text-[11px] font-black uppercase tracking-tight">{{ $product->name }}</p>
-                                <p class="text-[10px] text-nike-gray-500 uppercase">{{ $product->category->name }}</p>
-                                <p class="text-[12px] font-black mt-2 tracking-tighter">{{ number_format($product->price, 0, ',', '.') }}₫</p>
+                                <p class="text-[10px] uppercase text-nike-gray-500">{{ $product->category->name }}</p>
+                                <p class="mt-2 text-[12px] font-black tracking-tight">{{ number_format($product->price, 0, ',', '.') }}₫</p>
                             </a>
                         </div>
                     @endforeach
                 </div>
             @endif
         </div>
+
+        <div id="tab-content-support" class="tab-content hidden">
+            <div class="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+                <div>
+                    <h2 class="text-3xl font-bold uppercase">Lịch sử hỗ trợ</h2>
+                    <p class="mt-2 text-sm font-medium text-nike-gray-500">Các yêu cầu bạn đã gửi khi đăng nhập.</p>
+                </div>
+                <a href="{{ route('support.create') }}" class="inline-flex rounded-full bg-nike-black px-6 py-3 text-[10px] font-black uppercase tracking-widest text-white">
+                    Gửi hỗ trợ
+                </a>
+            </div>
+
+            <div class="space-y-4">
+                @forelse($supportTickets as $ticket)
+                    <article class="border border-nike-gray-150 bg-white p-5">
+                        <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                            <div>
+                                <p class="text-[10px] font-black uppercase tracking-widest text-nike-gray-400">#{{ $ticket->id }} · {{ $ticket->created_at->format('H:i d/m/Y') }}</p>
+                                <h3 class="mt-2 text-base font-black uppercase text-nike-black">{{ $ticket->subject }}</h3>
+                                <p class="mt-2 text-sm font-medium leading-6 text-nike-gray-600">{{ Str::limit($ticket->message, 180) }}</p>
+                            </div>
+                            <span class="shrink-0 bg-nike-black px-3 py-1.5 text-[9px] font-black uppercase tracking-widest text-white">{{ $ticket->status_label }}</span>
+                        </div>
+                        <div class="mt-4 grid grid-cols-1 gap-3 border-t border-nike-gray-100 pt-4 text-xs font-bold uppercase tracking-wider text-nike-gray-500 md:grid-cols-2">
+                            <p>Hoàn tất: <span class="text-nike-black">{{ $ticket->resolved_at?->format('H:i d/m/Y') ?? 'Chưa xử lý xong' }}</span></p>
+                            <p>Người xử lý: <span class="text-nike-black">{{ $ticket->resolver?->name ?? 'Chưa có' }}</span></p>
+                        </div>
+                        @if($ticket->admin_note)
+                            <p class="mt-4 border border-nike-gray-100 bg-nike-snow p-4 text-sm font-medium leading-6 text-nike-gray-600">{{ $ticket->admin_note }}</p>
+                        @endif
+                    </article>
+                @empty
+                    <div class="border border-dashed border-nike-gray-200 bg-white p-8 text-center">
+                        <p class="text-xs font-black uppercase tracking-widest text-nike-gray-400">Bạn chưa có yêu cầu hỗ trợ nào.</p>
+                    </div>
+                @endforelse
+            </div>
+        </div>
+
+        <div id="tab-content-marketplace" class="tab-content hidden">
+            <div class="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+                <div>
+                    <h2 class="text-3xl font-bold uppercase">Tin C2C của tôi</h2>
+                    <p class="mt-2 text-sm font-medium text-nike-gray-500">Theo dõi trạng thái tin đăng marketplace của bạn.</p>
+                </div>
+                <a href="{{ route('marketplace.create') }}" class="inline-flex rounded-full bg-nike-black px-6 py-3 text-[10px] font-black uppercase tracking-widest text-white">
+                    Đăng bán
+                </a>
+            </div>
+
+            <div class="space-y-4">
+                @forelse($marketplaceListings as $listing)
+                    <article class="flex flex-col gap-4 border border-nike-gray-150 bg-white p-4 md:flex-row md:items-center">
+                        <div class="h-28 w-full shrink-0 overflow-hidden bg-nike-snow md:w-28">
+                            <img src="{{ $listing->display_image_url }}" onerror="this.onerror=null; this.src='{{ asset('images/hero.png') }}'" alt="{{ $listing->display_name }}" class="h-full w-full object-cover">
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <div class="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
+                                <div>
+                                    <p class="text-[10px] font-black uppercase tracking-widest text-nike-gray-400">{{ $listing->display_source }}</p>
+                                    <h3 class="mt-1 text-sm font-black uppercase text-nike-black">{{ $listing->display_name }}</h3>
+                                    <p class="mt-1 text-xs font-bold uppercase tracking-wider text-nike-gray-500">Size {{ $listing->display_size }} · {{ $listing->display_color }}</p>
+                                </div>
+                                <p class="text-sm font-black text-nike-black">{{ number_format($listing->asking_price, 0, ',', '.') }}₫</p>
+                            </div>
+                            <div class="mt-4 flex flex-wrap items-center gap-3 text-[10px] font-black uppercase tracking-widest">
+                                <span class="bg-nike-black px-3 py-1.5 text-white">{{ $listing->owner_status_label }}</span>
+                                <span class="border border-nike-gray-150 px-3 py-1.5 text-nike-gray-500">Gửi {{ $listing->created_at->format('d/m/Y') }}</span>
+                                <span class="border border-nike-gray-150 px-3 py-1.5 text-nike-gray-500">Cập nhật {{ $listing->status_changed_at?->format('d/m/Y') }}</span>
+                                @if(! $listing->trashed())
+                                    <a href="{{ route('marketplace.show', $listing) }}" class="px-3 py-1.5 text-nike-black underline underline-offset-4">Xem tin</a>
+                                @endif
+                            </div>
+                        </div>
+                    </article>
+                @empty
+                    <div class="border border-dashed border-nike-gray-200 bg-white p-8 text-center">
+                        <p class="text-xs font-black uppercase tracking-widest text-nike-gray-400">Bạn chưa có tin C2C nào.</p>
+                    </div>
+                @endforelse
+            </div>
+        </div>
     </div>
 
-    {{-- Custom Wishlist Deletion Modal --}}
-    <div id="wishlist-delete-modal" class="fixed inset-0 z-[9999] flex items-center justify-center hidden">
+    <div id="wishlist-delete-modal" class="fixed inset-0 z-[9999] hidden items-center justify-center">
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="closeWishlistDeleteModal()"></div>
-        <div class="relative bg-white p-8 max-w-sm w-full border border-nike-gray-200 shadow-2xl animate-[scale-in_0.2s_ease-out] text-center rounded-none">
-            <h3 class="font-bold uppercase tracking-widest text-nike-black text-sm mb-4">Xác nhận</h3>
-            <p class="text-nike-gray-500 font-medium text-xs uppercase tracking-tight mb-8">Bạn muốn xóa sản phẩm này khỏi danh sách yêu thích?</p>
-            <div class="flex space-x-4">
-                <button onclick="closeWishlistDeleteModal()" class="flex-1 border border-black text-black py-3 text-[11px] font-bold uppercase tracking-widest hover:bg-nike-gray-50 transition-colors rounded-none">
-                    [ HỦY ]
+        <div class="relative w-full max-w-sm border border-nike-gray-200 bg-white p-8 text-center shadow-2xl">
+            <h3 class="mb-4 text-sm font-bold uppercase tracking-widest text-nike-black">Xác nhận</h3>
+            <p class="mb-8 text-xs font-medium uppercase tracking-tight text-nike-gray-500">Bạn muốn xóa sản phẩm này khỏi danh sách yêu thích?</p>
+            <div class="flex gap-4">
+                <button onclick="closeWishlistDeleteModal()" class="flex-1 border border-black py-3 text-[11px] font-bold uppercase tracking-widest text-black transition-colors hover:bg-nike-gray-50">
+                    Hủy
                 </button>
-                <button onclick="confirmRemoveFromWishlist()" class="flex-1 bg-black text-white py-3 text-[11px] font-bold uppercase tracking-widest hover:bg-nike-gray-800 transition-colors rounded-none">
-                    [ XÁC NHẬN ]
+                <button onclick="confirmRemoveFromWishlist()" class="flex-1 bg-black py-3 text-[11px] font-bold uppercase tracking-widest text-white transition-colors hover:bg-nike-gray-800">
+                    Xác nhận
                 </button>
             </div>
         </div>
@@ -169,17 +267,14 @@
 
 <script>
     function switchTab(tabName) {
-        // Hide all contents
         document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
-        // Deactivate all buttons
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.classList.remove('border-nike-black');
             btn.classList.add('border-transparent', 'text-nike-gray-400');
         });
 
-        // Show active content
         document.getElementById(`tab-content-${tabName}`).classList.remove('hidden');
-        // Activate active button
+
         const activeBtn = document.getElementById(`tab-btn-${tabName}`);
         activeBtn.classList.remove('border-transparent', 'text-nike-gray-400');
         activeBtn.classList.add('border-nike-black');
@@ -190,15 +285,20 @@
     function openWishlistDeleteModal(productId) {
         targetProductId = productId;
         document.getElementById('wishlist-delete-modal').classList.remove('hidden');
+        document.getElementById('wishlist-delete-modal').classList.add('flex');
     }
 
     function closeWishlistDeleteModal() {
         targetProductId = null;
         document.getElementById('wishlist-delete-modal').classList.add('hidden');
+        document.getElementById('wishlist-delete-modal').classList.remove('flex');
     }
 
     async function confirmRemoveFromWishlist() {
-        if (!targetProductId) return;
+        if (!targetProductId) {
+            return;
+        }
+
         const productId = targetProductId;
         closeWishlistDeleteModal();
 
@@ -214,20 +314,22 @@
             });
 
             const data = await response.json();
-            
+
             if (data.status === 'removed') {
                 const element = document.getElementById(`wishlist-item-${productId}`);
+
                 if (element) {
                     element.style.opacity = '0';
                     element.style.transform = 'scale(0.9)';
-                    
+
                     setTimeout(() => {
                         element.remove();
-                        
-                        // Check if wishlist is now empty
+
                         const grid = document.getElementById('wishlist-grid');
+
                         if (grid && grid.children.length === 0) {
                             grid.remove();
+
                             const container = document.getElementById('tab-content-wishlist');
                             const msg = document.createElement('p');
                             msg.id = 'empty-wishlist-msg';

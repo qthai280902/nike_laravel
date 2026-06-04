@@ -64,7 +64,7 @@
                             </span>
                             <div>
                                 <p class="text-sm font-black uppercase tracking-tight text-nike-black">{{ $listing->user->name }}</p>
-                                <p class="text-xs font-medium text-nike-gray-500">Tin đăng từ cộng đồng, đã qua kiểm duyệt.</p>
+                                <p class="text-xs font-medium text-nike-gray-500">Tin đăng từ cộng đồng. Trạng thái hiện tại: {{ $listing->status_label }}.</p>
                             </div>
                         </div>
                     </div>

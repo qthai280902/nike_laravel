@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="Air Max product image">
+  <rect width="1024" height="1024" fill="#f4f4f0"/>
+  <circle cx="790" cy="220" r="160" fill="#d3122a" opacity=".12"/>
+  <path d="M178 596c100-86 196-130 298-136 116-8 188 46 268 50 58 2 104-18 142-52 20 52 8 112-36 152-64 58-198 72-366 66-128-4-234-24-306-80z" fill="#111"/>
+  <path d="M226 574c96-54 174-76 260-82 84-6 142 22 204 36-62 20-146 34-256 34-76 0-144 4-208 12z" fill="#fff"/>
+  <path d="M286 652c128 22 292 26 478 6 18 34 8 68-30 88H314c-44-12-58-44-28-94z" fill="#d3122a"/>
+  <path d="M346 708h320" stroke="#fff" stroke-width="22" stroke-linecap="round"/>
+  <text x="72" y="166" fill="#111" font-family="Arial, sans-serif" font-size="72" font-weight="900">AIR MAX</text>
+</svg>

@@ -73,6 +73,16 @@
                         @endif
                     </div>
                 </div>
+
+                <div>
+                    <label class="block text-[10px] text-zinc-500 uppercase tracking-widest">Hoàn tất lúc</label>
+                    <p class="text-zinc-300 mt-0.5">{{ $ticket->resolved_at?->format('H:i d/m/Y') ?? 'Chưa xử lý xong' }}</p>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] text-zinc-500 uppercase tracking-widest">Người xử lý</label>
+                    <p class="text-zinc-300 mt-0.5">{{ $ticket->resolver?->name ?? 'Chưa có' }}</p>
+                </div>
             </div>
         </div>
 

@@ -25,7 +25,7 @@ class MarketplaceService
     /**
      * Create a new marketplace listing.
      *
-     * @param  array{product_variant_id?: ?string, product_name?: ?string, brand?: ?string, size?: ?string, color?: ?string, image_url?: ?string, asking_price: numeric, condition: string, seller_description: string}  $data
+     * @param  array{product_variant_id?: ?string, product_name?: ?string, brand?: ?string, size?: ?string, color?: ?string, image_url?: ?string, image_path?: ?string, asking_price: numeric, condition: string, seller_description: string}  $data
      */
     public function createListing(array $data, int $userId): MarketplaceListing
     {
@@ -37,6 +37,7 @@ class MarketplaceService
             'size' => $data['size'] ?? null,
             'color' => $data['color'] ?? null,
             'image_url' => $data['image_url'] ?? null,
+            'image_path' => $data['image_path'] ?? null,
             'asking_price' => $data['asking_price'],
             'condition' => $data['condition'],
             'seller_description' => $data['seller_description'],

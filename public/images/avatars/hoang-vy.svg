@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="Hoang Vy avatar">
+  <rect width="160" height="160" fill="#fafafa"/>
+  <circle cx="80" cy="69" r="36" fill="#111111"/>
+  <path d="M29 146c9-32 28-50 51-50s42 18 51 50" fill="#e4e4e7"/>
+  <path d="M43 74c3-40 27-58 37-58s34 18 37 58c-14-13-59-13-74 0z" fill="#3f3f46"/>
+  <circle cx="68" cy="67" r="5" fill="#ffffff"/>
+  <circle cx="92" cy="67" r="5" fill="#ffffff"/>
+  <path d="M69 85c8 5 15 5 23 0" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
+</svg>

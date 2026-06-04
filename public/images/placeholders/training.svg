@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="Training product image">
+  <rect width="1024" height="1024" fill="#f2f2ff"/>
+  <path d="M92 250h248v68H92zM684 250h248v68H684zM334 210h356v148H334z" fill="#4338ca" opacity=".16"/>
+  <path d="M168 618c112-84 218-126 318-126 110 0 178 42 260 48 58 4 106-12 146-42 18 54 2 110-48 150-78 62-232 72-424 50-104-12-190-38-252-80z" fill="#111"/>
+  <path d="M242 590c88-46 174-66 258-64 70 2 126 20 172 40-98 22-206 28-326 16-36-2-70 0-104 8z" fill="#fff"/>
+  <path d="M308 690h488c-22 48-64 72-126 72H344c-38-12-50-36-36-72z" fill="#4338ca"/>
+  <text x="72" y="166" fill="#111" font-family="Arial, sans-serif" font-size="72" font-weight="900">TRAINING</text>
+</svg>
