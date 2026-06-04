@@ -1,170 +1,218 @@
 @extends('layouts.app')
 
-@section('title', 'Đăng bán sản phẩm | Nike Marketplace')
+@section('title', 'Đăng bán giày | Nike Chợ đồ cũ')
 
 @section('content')
-<section class="max-w-[1920px] mx-auto px-6 md:px-12 py-16 bg-white min-h-screen">
-    <div class="max-w-4xl mx-auto">
-        <div class="mb-16">
-            <h1 class="text-5xl md:text-7xl font-black uppercase tracking-tighter mb-8 leading-none">Rao bán<br>Sản phẩm.</h1>
-
-            <div class="flex items-center space-x-4">
-                <div id="step-dot-1" class="w-12 h-1.5 bg-nike-black transition-all duration-500"></div>
-                <div id="step-dot-2" class="w-12 h-1.5 bg-nike-gray-100 transition-all duration-500"></div>
-                <div id="step-dot-3" class="w-12 h-1.5 bg-nike-gray-100 transition-all duration-500"></div>
+<section class="bg-white px-6 py-10 md:px-12 md:py-14">
+    <div class="mx-auto max-w-[1440px]">
+        <div class="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div class="max-w-3xl">
+                <p class="mb-3 text-xs font-black uppercase tracking-[0.24em] text-nike-gray-400">Chợ đồ cũ C2C</p>
+                <h1 class="text-4xl font-black uppercase leading-none tracking-tight text-nike-black md:text-6xl">
+                    Đăng bán đôi giày của bạn
+                </h1>
+                <p class="mt-4 max-w-2xl text-sm font-medium leading-relaxed text-nike-gray-500 md:text-base">
+                    Nhập trực tiếp thông tin sản phẩm. Bạn không cần chọn mẫu từ catalog cửa hàng.
+                </p>
             </div>
+
+            <a href="{{ route('marketplace.index') }}" class="inline-flex items-center justify-center rounded-full border border-nike-gray-200 px-6 py-3 text-xs font-black uppercase tracking-widest text-nike-black transition hover:border-nike-black">
+                Quay lại chợ
+            </a>
         </div>
 
         @if($errors->any())
-            <div class="mb-10 bg-red-50 border border-red-100 text-nike-red px-6 py-4 text-xs font-bold uppercase tracking-widest">
+            <div class="mb-8 border border-red-200 bg-red-50 px-5 py-4 text-xs font-bold uppercase tracking-widest text-nike-red">
                 Vui lòng kiểm tra lại thông tin đăng bán.
             </div>
         @endif
 
-        <form action="{{ route('marketplace.store') }}" method="POST" class="grid grid-cols-1 lg:grid-cols-12 gap-16">
+        <form action="{{ route('marketplace.store') }}" method="POST" class="grid grid-cols-1 gap-8 lg:grid-cols-12">
             @csrf
 
-            <div class="lg:col-span-7 space-y-20">
-                <div class="space-y-8">
-                    <div class="flex items-center space-x-4">
-                        <span class="w-8 h-8 rounded-full bg-nike-black text-white flex items-center justify-center font-black text-xs">01</span>
-                        <label for="product-search" class="text-xs font-black uppercase tracking-[0.2em] text-nike-black">Chọn mẫu giày từ catalog</label>
+            <div class="space-y-8 lg:col-span-8">
+                <div class="border border-nike-gray-150 bg-nike-snow p-5 md:p-6">
+                    <div class="mb-5 flex items-start justify-between gap-4">
+                        <div>
+                            <h2 class="text-sm font-black uppercase tracking-widest text-nike-black">Chọn nhanh từ catalog</h2>
+                            <p class="mt-2 text-xs font-medium leading-relaxed text-nike-gray-500">
+                                Không bắt buộc. Dùng mục này nếu đôi giày của bạn trùng với sản phẩm trong cửa hàng.
+                            </p>
+                        </div>
+                        <button type="button" id="clear-catalog-btn" class="hidden shrink-0 rounded-full border border-nike-gray-200 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-nike-black transition hover:border-nike-black">
+                            Bỏ chọn
+                        </button>
                     </div>
 
-                    <div class="relative" id="search-container">
-                        <input type="text" id="product-search" placeholder="Gõ tên giày, ví dụ: Air Max, Dunk, Force..." autocomplete="off"
-                            class="w-full border-b-2 border-nike-gray-100 p-0 py-6 text-2xl font-bold uppercase tracking-tight focus:border-nike-black focus:outline-none transition-all placeholder:text-nike-gray-300">
-
-                        <div id="search-results" class="absolute top-full left-0 right-0 bg-white shadow-2xl z-50 hidden border border-nike-gray-100 mt-2"></div>
-                    </div>
-                </div>
-
-                <div id="step-variant-container" class="space-y-8 opacity-20 pointer-events-none transition-all duration-700">
-                    <div class="flex items-center space-x-4">
-                        <span id="step-num-2" class="w-8 h-8 rounded-full bg-nike-gray-100 text-nike-gray-400 flex items-center justify-center font-black text-xs transition-colors">02</span>
-                        <label class="text-xs font-black uppercase tracking-[0.2em] text-nike-black">Chọn size giày của bạn</label>
+                    <div class="relative" id="catalog-search-container">
+                        <input type="text" id="product-search" placeholder="Gõ Air Max, Dunk, Pegasus..."
+                            class="w-full border border-nike-gray-200 bg-white px-4 py-3 text-sm font-bold text-nike-black outline-none transition placeholder:text-nike-gray-300 focus:border-nike-black">
+                        <div id="search-results" class="absolute left-0 right-0 top-full z-40 mt-2 hidden border border-nike-gray-150 bg-white shadow-2xl"></div>
                     </div>
 
-                    <div id="variant-grid" class="grid grid-cols-3 sm:grid-cols-5 gap-3"></div>
-                    <input type="hidden" name="product_variant_id" id="variant-input" required value="{{ old('product_variant_id') }}">
+                    <input type="hidden" name="product_variant_id" id="variant-input" value="{{ old('product_variant_id') }}">
+
+                    <div id="catalog-selection" class="mt-5 hidden border-t border-nike-gray-150 pt-5">
+                        <div class="flex items-start gap-4">
+                            <div class="h-20 w-20 shrink-0 overflow-hidden bg-white">
+                                <img id="catalog-preview-img" src="{{ asset('images/hero.png') }}" alt="" class="h-full w-full object-cover">
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-[10px] font-black uppercase tracking-widest text-nike-gray-400">Đã chọn catalog</p>
+                                <h3 id="catalog-preview-name" class="mt-1 text-sm font-black uppercase leading-tight text-nike-black"></h3>
+                                <p id="catalog-preview-variant" class="mt-2 text-xs font-bold uppercase tracking-wider text-nike-gray-500">Chọn size hoặc nhập thủ công bên dưới.</p>
+                            </div>
+                        </div>
+
+                        <div id="variant-grid" class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4 md:grid-cols-6"></div>
+                    </div>
+
                     @error('product_variant_id')
-                        <p class="text-nike-red text-xs font-bold uppercase tracking-widest">{{ $message }}</p>
+                        <p class="mt-3 text-xs font-bold uppercase tracking-widest text-nike-red">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <div id="step-details-container" class="space-y-12 opacity-20 pointer-events-none transition-all duration-700">
-                    <div class="flex items-center space-x-4">
-                        <span id="step-num-3" class="w-8 h-8 rounded-full bg-nike-gray-100 text-nike-gray-400 flex items-center justify-center font-black text-xs transition-colors">03</span>
-                        <label class="text-xs font-black uppercase tracking-[0.2em] text-nike-black">Thông tin rao bán</label>
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <div class="md:col-span-2">
+                        <label for="product_name" class="mb-2 block text-[10px] font-black uppercase tracking-widest text-nike-gray-400">Tên giày</label>
+                        <input id="product_name" name="product_name" type="text" required value="{{ old('product_name') }}" placeholder="Ví dụ: Nike Air Max 90"
+                            class="w-full border-b border-nike-gray-200 bg-transparent py-4 text-2xl font-black uppercase tracking-tight text-nike-black outline-none transition placeholder:text-nike-gray-300 focus:border-nike-black">
+                        @error('product_name')
+                            <p class="mt-2 text-xs font-bold uppercase tracking-widest text-nike-red">{{ $message }}</p>
+                        @enderror
                     </div>
 
-                    <div class="space-y-12">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div class="space-y-3">
-                                <label for="asking_price" class="text-[10px] font-black uppercase tracking-widest text-nike-gray-400">Giá bán mong muốn (VNĐ)</label>
-                                <input id="asking_price" type="number" name="asking_price" placeholder="Ví dụ: 2500000" required value="{{ old('asking_price') }}"
-                                    class="w-full border-b border-nike-gray-100 py-4 text-2xl font-black tracking-tighter focus:border-nike-black focus:outline-none transition-all">
-                                @error('asking_price')
-                                    <p class="text-nike-red text-xs font-bold uppercase tracking-widest">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <div class="space-y-3">
-                                <label for="condition" class="text-[10px] font-black uppercase tracking-widest text-nike-gray-400">Tình trạng giày</label>
-                                <select id="condition" name="condition" required class="w-full border-b border-nike-gray-100 py-5 text-xs font-black uppercase tracking-widest focus:border-nike-black focus:outline-none cursor-pointer">
-                                    <option value="new_with_box" @selected(old('condition') === 'new_with_box')>Mới nguyên hộp</option>
-                                    <option value="like_new" @selected(old('condition') === 'like_new')>Như mới</option>
-                                    <option value="good" @selected(old('condition', 'good') === 'good')>Tốt</option>
-                                    <option value="fair" @selected(old('condition') === 'fair')>Đã qua sử dụng</option>
-                                </select>
-                                @error('condition')
-                                    <p class="text-nike-red text-xs font-bold uppercase tracking-widest">{{ $message }}</p>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="space-y-3">
-                            <label for="seller_description" class="text-[10px] font-black uppercase tracking-widest text-nike-gray-400">Mô tả thêm</label>
-                            <textarea id="seller_description" name="seller_description" rows="3" placeholder="Chia sẻ thêm về lịch sử đôi giày..."
-                                class="w-full bg-nike-snow p-6 text-sm font-medium focus:ring-1 focus:ring-nike-black focus:outline-none transition-all">{{ old('seller_description') }}</textarea>
-                            @error('seller_description')
-                                <p class="text-nike-red text-xs font-bold uppercase tracking-widest">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <button type="submit" class="group w-full bg-nike-black text-white py-6 rounded-full font-black uppercase text-sm tracking-[0.3em] hover:bg-nike-gray-800 transition-all flex items-center justify-center">
-                            Đăng tin kiểm duyệt
-                            <svg class="w-4 h-4 ml-4 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="lg:col-span-5">
-                <div class="sticky top-32">
-                    <div id="product-card-preview" class="border border-nike-gray-100 p-8 text-center bg-nike-snow/50 opacity-40 transition-all duration-700">
-                        <div id="preview-placeholder" class="py-20 flex flex-col items-center">
-                            <svg class="w-16 h-16 text-nike-gray-200 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            <p class="text-[10px] font-black uppercase tracking-widest text-nike-gray-300">Chưa chọn sản phẩm</p>
-                        </div>
-
-                        <div id="preview-content" class="hidden">
-                            <div class="aspect-square bg-white mb-8 overflow-hidden">
-                                <img id="preview-img" src="" alt="" class="w-full h-full object-cover">
-                            </div>
-                            <h3 id="preview-name" class="text-xl font-black uppercase tracking-tight mb-2"></h3>
-                            <p id="preview-category" class="text-[10px] font-bold text-nike-gray-400 uppercase tracking-widest mb-2"></p>
-                            <p id="preview-variant" class="text-[10px] font-bold text-nike-gray-400 uppercase tracking-widest mb-6">Vui lòng chọn size</p>
-
-                            <button type="button" id="reset-search-btn" class="text-[10px] font-black uppercase tracking-widest border-b-2 border-nike-black pb-1 hover:text-nike-gray-400 hover:border-nike-gray-400 transition-all">
-                                Thay đổi mẫu khác
-                            </button>
-                        </div>
+                    <div>
+                        <label for="brand" class="mb-2 block text-[10px] font-black uppercase tracking-widest text-nike-gray-400">Thương hiệu</label>
+                        <input id="brand" name="brand" type="text" value="{{ old('brand', 'Nike') }}" placeholder="Nike"
+                            class="w-full border-b border-nike-gray-200 bg-transparent py-4 text-sm font-bold text-nike-black outline-none transition focus:border-nike-black">
+                        @error('brand')
+                            <p class="mt-2 text-xs font-bold uppercase tracking-widest text-nike-red">{{ $message }}</p>
+                        @enderror
                     </div>
 
-                    <div class="mt-8 p-6 bg-nike-snow border border-nike-gray-100">
-                        <div class="flex items-start">
-                            <svg class="w-5 h-5 text-nike-black mt-1 mr-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                            <p class="text-[11px] font-medium text-nike-gray-500 leading-relaxed">
-                                <strong>Lưu ý:</strong> Mọi sản phẩm đăng trên Chợ đều được admin kiểm duyệt trước khi hiển thị công khai.
-                            </p>
-                        </div>
+                    <div>
+                        <label for="image_url" class="mb-2 block text-[10px] font-black uppercase tracking-widest text-nike-gray-400">Ảnh sản phẩm URL</label>
+                        <input id="image_url" name="image_url" type="url" value="{{ old('image_url') }}" placeholder="https://..."
+                            class="w-full border-b border-nike-gray-200 bg-transparent py-4 text-sm font-bold text-nike-black outline-none transition focus:border-nike-black">
+                        @error('image_url')
+                            <p class="mt-2 text-xs font-bold uppercase tracking-widest text-nike-red">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="size" class="mb-2 block text-[10px] font-black uppercase tracking-widest text-nike-gray-400">Size</label>
+                        <input id="size" name="size" type="text" required value="{{ old('size') }}" placeholder="US 9, EU 42..."
+                            class="w-full border-b border-nike-gray-200 bg-transparent py-4 text-sm font-bold text-nike-black outline-none transition focus:border-nike-black">
+                        @error('size')
+                            <p class="mt-2 text-xs font-bold uppercase tracking-widest text-nike-red">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="color" class="mb-2 block text-[10px] font-black uppercase tracking-widest text-nike-gray-400">Màu sắc</label>
+                        <input id="color" name="color" type="text" required value="{{ old('color') }}" placeholder="Trắng/Đen"
+                            class="w-full border-b border-nike-gray-200 bg-transparent py-4 text-sm font-bold text-nike-black outline-none transition focus:border-nike-black">
+                        @error('color')
+                            <p class="mt-2 text-xs font-bold uppercase tracking-widest text-nike-red">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="asking_price" class="mb-2 block text-[10px] font-black uppercase tracking-widest text-nike-gray-400">Giá bán mong muốn</label>
+                        <input id="asking_price" name="asking_price" type="number" min="0" required value="{{ old('asking_price') }}" placeholder="2500000"
+                            class="w-full border-b border-nike-gray-200 bg-transparent py-4 text-2xl font-black tracking-tight text-nike-black outline-none transition focus:border-nike-black">
+                        @error('asking_price')
+                            <p class="mt-2 text-xs font-bold uppercase tracking-widest text-nike-red">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label for="condition" class="mb-2 block text-[10px] font-black uppercase tracking-widest text-nike-gray-400">Tình trạng</label>
+                        <select id="condition" name="condition" required class="w-full border-b border-nike-gray-200 bg-transparent py-4 text-sm font-black uppercase tracking-widest text-nike-black outline-none transition focus:border-nike-black">
+                            <option value="new_with_box" @selected(old('condition') === 'new_with_box')>Mới nguyên hộp</option>
+                            <option value="like_new" @selected(old('condition') === 'like_new')>Như mới</option>
+                            <option value="good" @selected(old('condition', 'good') === 'good')>Tốt</option>
+                            <option value="fair" @selected(old('condition') === 'fair')>Đã qua sử dụng</option>
+                        </select>
+                        @error('condition')
+                            <p class="mt-2 text-xs font-bold uppercase tracking-widest text-nike-red">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label for="seller_description" class="mb-2 block text-[10px] font-black uppercase tracking-widest text-nike-gray-400">Mô tả</label>
+                        <textarea id="seller_description" name="seller_description" rows="5" required placeholder="Mô tả tình trạng đế, upper, hộp, lịch sử sử dụng..."
+                            class="w-full border border-nike-gray-200 bg-nike-snow p-5 text-sm font-medium leading-relaxed text-nike-black outline-none transition focus:border-nike-black">{{ old('seller_description') }}</textarea>
+                        @error('seller_description')
+                            <p class="mt-2 text-xs font-bold uppercase tracking-widest text-nike-red">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
+
+                <button type="submit" class="inline-flex w-full items-center justify-center rounded-full bg-nike-black px-8 py-5 text-xs font-black uppercase tracking-[0.24em] text-white transition hover:bg-nike-gray-800 md:w-auto">
+                    Đăng tin kiểm duyệt
+                </button>
             </div>
+
+            <aside class="lg:col-span-4">
+                <div class="sticky top-28 border border-nike-gray-150 bg-white p-5">
+                    <p class="mb-4 text-[10px] font-black uppercase tracking-widest text-nike-gray-400">Xem trước tin đăng</p>
+                    <div class="aspect-square overflow-hidden bg-nike-snow">
+                        <img id="listing-preview-img" src="{{ old('image_url') ?: asset('images/hero.png') }}" onerror="this.onerror=null; this.src='{{ asset('images/hero.png') }}'" alt="" class="h-full w-full object-cover">
+                    </div>
+
+                    <div class="mt-5 space-y-3">
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <p id="listing-preview-brand" class="text-[10px] font-black uppercase tracking-widest text-nike-gray-400">{{ old('brand', 'Nike') }}</p>
+                                <h3 id="listing-preview-name" class="mt-1 text-lg font-black uppercase leading-tight text-nike-black">{{ old('product_name', 'Tên đôi giày') }}</h3>
+                            </div>
+                            <p id="listing-preview-price" class="shrink-0 text-sm font-black text-nike-black">0₫</p>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 border-t border-nike-gray-150 pt-4 text-xs font-bold uppercase tracking-wider">
+                            <div>
+                                <span class="block text-nike-gray-400">Size</span>
+                                <span id="listing-preview-size" class="text-nike-black">{{ old('size', 'Chưa nhập') }}</span>
+                            </div>
+                            <div>
+                                <span class="block text-nike-gray-400">Màu</span>
+                                <span id="listing-preview-color" class="text-nike-black">{{ old('color', 'Chưa nhập') }}</span>
+                            </div>
+                        </div>
+
+                        <p class="border-t border-nike-gray-150 pt-4 text-xs font-medium leading-relaxed text-nike-gray-500">
+                            Tin đăng sẽ hiển thị sau khi admin kiểm duyệt. Hệ thống chưa hỗ trợ thanh toán C2C hoặc escrow trong phase này.
+                        </p>
+                    </div>
+                </div>
+            </aside>
         </form>
     </div>
 </section>
 
 <script>
+(() => {
     const searchUrl = @json(route('marketplace.search'));
     const variantUrlTemplate = @json(route('marketplace.products.variants', ['product' => '__PRODUCT__']));
+    const placeholderImage = @json(asset('images/hero.png'));
+
+    const productInput = document.getElementById('product_name');
+    const brandInput = document.getElementById('brand');
+    const sizeInput = document.getElementById('size');
+    const colorInput = document.getElementById('color');
+    const imageInput = document.getElementById('image_url');
+    const priceInput = document.getElementById('asking_price');
+    const variantInput = document.getElementById('variant-input');
+    const searchInput = document.getElementById('product-search');
+    const resultsBox = document.getElementById('search-results');
+    const selectionBox = document.getElementById('catalog-selection');
+    const variantGrid = document.getElementById('variant-grid');
+    const clearCatalogBtn = document.getElementById('clear-catalog-btn');
 
     let searchTimeout;
     let currentProducts = [];
-
-    const searchInput = document.getElementById('product-search');
-    const resultsBox = document.getElementById('search-results');
-    const previewContent = document.getElementById('preview-content');
-    const previewPlaceholder = document.getElementById('preview-placeholder');
-    const productCard = document.getElementById('product-card-preview');
-    const variantStep = document.getElementById('step-variant-container');
-    const detailsStep = document.getElementById('step-details-container');
-    const variantGrid = document.getElementById('variant-grid');
-    const variantInput = document.getElementById('variant-input');
-    const resetSearchBtn = document.getElementById('reset-search-btn');
-
-    const stepDots = [
-        document.getElementById('step-dot-1'),
-        document.getElementById('step-dot-2'),
-        document.getElementById('step-dot-3')
-    ];
-
-    const stepNums = [
-        null,
-        document.getElementById('step-num-2'),
-        document.getElementById('step-num-3')
-    ];
 
     function escapeHtml(value) {
         return String(value ?? '')
@@ -175,45 +223,40 @@
             .replace(/'/g, '&#039;');
     }
 
-    function setStepActive(step) {
-        if (step >= 2) {
-            variantStep.classList.remove('opacity-20', 'pointer-events-none');
-            stepDots[1].classList.replace('bg-nike-gray-100', 'bg-nike-black');
-            stepNums[1].classList.replace('bg-nike-gray-100', 'bg-nike-black');
-            stepNums[1].classList.replace('text-nike-gray-400', 'text-white');
-        }
+    function formatCurrency(value) {
+        const number = Number(value || 0);
+        return `${number.toLocaleString('vi-VN')}₫`;
+    }
 
-        if (step >= 3) {
-            detailsStep.classList.remove('opacity-20', 'pointer-events-none');
-            stepDots[2].classList.replace('bg-nike-gray-100', 'bg-nike-black');
-            stepNums[2].classList.replace('bg-nike-gray-100', 'bg-nike-black');
-            stepNums[2].classList.replace('text-nike-gray-400', 'text-white');
-        }
+    function updatePreview() {
+        document.getElementById('listing-preview-name').innerText = productInput.value || 'Tên đôi giày';
+        document.getElementById('listing-preview-brand').innerText = brandInput.value || 'Nike';
+        document.getElementById('listing-preview-size').innerText = sizeInput.value || 'Chưa nhập';
+        document.getElementById('listing-preview-color').innerText = colorInput.value || 'Chưa nhập';
+        document.getElementById('listing-preview-price').innerText = formatCurrency(priceInput.value);
+        document.getElementById('listing-preview-img').src = imageInput.value || placeholderImage;
     }
 
     function renderProducts(products) {
         if (products.length === 0) {
-            resultsBox.innerHTML = '<div class="p-8 text-center text-[10px] font-black uppercase tracking-widest text-nike-gray-300">Không tìm thấy sản phẩm</div>';
+            resultsBox.innerHTML = '<div class="p-5 text-center text-[10px] font-black uppercase tracking-widest text-nike-gray-400">Không tìm thấy sản phẩm phù hợp</div>';
             resultsBox.classList.remove('hidden');
             return;
         }
 
         resultsBox.innerHTML = products.map((product, index) => `
-            <button type="button" data-product-index="${index}" class="product-result w-full flex items-center p-6 hover:bg-nike-gray-50 cursor-pointer transition-colors border-b border-nike-gray-50 group text-left">
-                <div class="w-16 h-16 bg-nike-snow overflow-hidden mr-6 flex-shrink-0">
-                    <img src="${escapeHtml(product.image_url)}" alt="" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                </div>
-                <div>
-                    <h4 class="font-black uppercase text-sm tracking-tight">${escapeHtml(product.name)}</h4>
-                    <p class="text-[10px] text-nike-gray-400 uppercase font-bold tracking-widest">${escapeHtml(product.category ?? 'Catalog')}</p>
-                </div>
-                <div class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                </div>
+            <button type="button" data-product-index="${index}" class="catalog-result flex w-full items-center gap-4 border-b border-nike-gray-100 p-4 text-left transition hover:bg-nike-snow">
+                <span class="h-14 w-14 shrink-0 overflow-hidden bg-nike-snow">
+                    <img src="${escapeHtml(product.image_url || placeholderImage)}" onerror="this.onerror=null; this.src='${placeholderImage}'" alt="" class="h-full w-full object-cover">
+                </span>
+                <span class="min-w-0">
+                    <span class="block truncate text-sm font-black uppercase text-nike-black">${escapeHtml(product.name)}</span>
+                    <span class="mt-1 block text-[10px] font-bold uppercase tracking-widest text-nike-gray-400">${escapeHtml(product.category || 'Catalog')}</span>
+                </span>
             </button>
         `).join('');
 
-        document.querySelectorAll('.product-result').forEach(button => {
+        document.querySelectorAll('.catalog-result').forEach(button => {
             button.addEventListener('click', () => selectProduct(Number(button.dataset.productIndex)));
         });
 
@@ -221,83 +264,66 @@
     }
 
     async function fetchVariants(product) {
-        variantGrid.innerHTML = '<div class="col-span-full text-[10px] font-black uppercase tracking-widest text-nike-gray-400">Đang tải size...</div>';
-        const url = variantUrlTemplate.replace('__PRODUCT__', product.id);
-        const response = await fetch(url, { headers: { 'Accept': 'application/json' } });
+        variantGrid.innerHTML = '<div class="col-span-full text-[10px] font-black uppercase tracking-widest text-nike-gray-400">Đang tải size catalog...</div>';
+        const response = await fetch(variantUrlTemplate.replace('__PRODUCT__', product.id), {
+            headers: { 'Accept': 'application/json' }
+        });
         const payload = await response.json();
         renderVariants(payload.data ?? []);
     }
 
     function renderVariants(variants) {
-        variantInput.value = '';
-
         if (variants.length === 0) {
-            variantGrid.innerHTML = '<div class="col-span-full text-[10px] font-black uppercase tracking-widest text-nike-gray-400">Sản phẩm này chưa có size khả dụng.</div>';
+            variantGrid.innerHTML = '<div class="col-span-full text-[10px] font-black uppercase tracking-widest text-nike-gray-400">Không có size catalog, hãy nhập thủ công.</div>';
             return;
         }
 
         variantGrid.innerHTML = variants.map(variant => `
-            <button type="button" data-variant-id="${escapeHtml(variant.id)}" data-variant-size="${escapeHtml(variant.size)}" data-variant-color="${escapeHtml(variant.color)}"
-                class="variant-item border-2 border-nike-gray-100 py-4 text-xs font-black uppercase tracking-widest hover:border-nike-black transition-all">
+            <button type="button" data-id="${escapeHtml(variant.id)}" data-size="${escapeHtml(variant.size)}" data-color="${escapeHtml(variant.color)}"
+                class="variant-choice border border-nike-gray-200 px-3 py-3 text-[10px] font-black uppercase tracking-widest transition hover:border-nike-black">
                 ${escapeHtml(variant.size)}
             </button>
         `).join('');
 
-        document.querySelectorAll('.variant-item').forEach(button => {
-            button.addEventListener('click', () => selectVariant(button));
+        document.querySelectorAll('.variant-choice').forEach(button => {
+            button.addEventListener('click', () => {
+                document.querySelectorAll('.variant-choice').forEach(item => item.classList.remove('bg-nike-black', 'text-white', 'border-nike-black'));
+                button.classList.add('bg-nike-black', 'text-white', 'border-nike-black');
+                variantInput.value = button.dataset.id;
+                sizeInput.value = button.dataset.size;
+                colorInput.value = button.dataset.color || colorInput.value;
+                document.getElementById('catalog-preview-variant').innerText = `Size: ${button.dataset.size} | Màu: ${button.dataset.color || 'Chưa rõ'}`;
+                updatePreview();
+            });
         });
     }
 
     async function selectProduct(index) {
         const product = currentProducts[index];
         resultsBox.classList.add('hidden');
+        selectionBox.classList.remove('hidden');
+        clearCatalogBtn.classList.remove('hidden');
         searchInput.value = product.name;
-
-        previewPlaceholder.classList.add('hidden');
-        previewContent.classList.remove('hidden');
-        productCard.classList.remove('opacity-40');
-        document.getElementById('preview-img').src = product.image_url;
-        document.getElementById('preview-img').alt = product.name;
-        document.getElementById('preview-name').innerText = product.name;
-        document.getElementById('preview-category').innerText = product.category ?? 'Catalog';
-        document.getElementById('preview-variant').innerText = 'Vui lòng chọn size';
-
-        setStepActive(2);
-        await fetchVariants(product);
-        variantStep.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-
-    function selectVariant(button) {
-        variantInput.value = button.dataset.variantId;
-
-        document.querySelectorAll('.variant-item').forEach(item => {
-            item.classList.remove('bg-nike-black', 'text-white', 'border-nike-black');
-        });
-
-        button.classList.add('bg-nike-black', 'text-white', 'border-nike-black');
-        document.getElementById('preview-variant').innerText = `Size: ${button.dataset.variantSize} | Màu: ${button.dataset.variantColor}`;
-
-        setStepActive(3);
-        detailsStep.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-
-    function resetSearch() {
-        previewPlaceholder.classList.remove('hidden');
-        previewContent.classList.add('hidden');
-        productCard.classList.add('opacity-40');
-        searchInput.value = '';
+        productInput.value = product.name;
+        brandInput.value = 'Nike';
+        imageInput.value = product.image_url || '';
         variantInput.value = '';
-        variantGrid.innerHTML = '';
-        variantStep.classList.add('opacity-20', 'pointer-events-none');
-        detailsStep.classList.add('opacity-20', 'pointer-events-none');
 
-        stepDots[1].classList.replace('bg-nike-black', 'bg-nike-gray-100');
-        stepDots[2].classList.replace('bg-nike-black', 'bg-nike-gray-100');
-        stepNums[1].classList.replace('bg-nike-black', 'bg-nike-gray-100');
-        stepNums[1].classList.replace('text-white', 'text-nike-gray-400');
-        stepNums[2].classList.replace('bg-nike-black', 'bg-nike-gray-100');
-        stepNums[2].classList.replace('text-white', 'text-nike-gray-400');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        document.getElementById('catalog-preview-name').innerText = product.name;
+        document.getElementById('catalog-preview-img').src = product.image_url || placeholderImage;
+        document.getElementById('catalog-preview-variant').innerText = 'Chọn size hoặc nhập thủ công bên dưới.';
+
+        updatePreview();
+        await fetchVariants(product);
+    }
+
+    function clearCatalogSelection() {
+        variantInput.value = '';
+        searchInput.value = '';
+        selectionBox.classList.add('hidden');
+        clearCatalogBtn.classList.add('hidden');
+        variantGrid.innerHTML = '';
+        document.getElementById('catalog-preview-variant').innerText = 'Chọn size hoặc nhập thủ công bên dưới.';
     }
 
     searchInput.addEventListener('input', function() {
@@ -310,19 +336,28 @@
         }
 
         searchTimeout = setTimeout(async () => {
-            const response = await fetch(`${searchUrl}?q=${encodeURIComponent(query)}`, { headers: { 'Accept': 'application/json' } });
+            const response = await fetch(`${searchUrl}?q=${encodeURIComponent(query)}`, {
+                headers: { 'Accept': 'application/json' }
+            });
             const payload = await response.json();
             currentProducts = payload.data ?? [];
             renderProducts(currentProducts);
         }, 300);
     });
 
-    resetSearchBtn.addEventListener('click', resetSearch);
+    [productInput, brandInput, sizeInput, colorInput, imageInput, priceInput].forEach(input => {
+        input.addEventListener('input', updatePreview);
+    });
+
+    clearCatalogBtn.addEventListener('click', clearCatalogSelection);
 
     document.addEventListener('click', function(event) {
-        if (!document.getElementById('search-container').contains(event.target)) {
+        if (!document.getElementById('catalog-search-container').contains(event.target)) {
             resultsBox.classList.add('hidden');
         }
     });
+
+    updatePreview();
+})();
 </script>
 @endsection

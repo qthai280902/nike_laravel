@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ProductVariant;
+use App\Services\CartService;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
+    public function __construct(
+        protected CartService $cartService
+    ) {}
+
     /**
      * Add a product variant to the cart.
      */
@@ -14,38 +18,20 @@ class CartController extends Controller
     {
         $request->validate([
             'variant_id' => 'required|exists:product_variants,id',
-            'quantity' => 'required|integer|min:1'
+            'quantity' => 'required|integer|min:1',
         ]);
 
-        $cart = session()->get('cart', []);
-        $variantId = $request->variant_id;
-        $variant = ProductVariant::with('product')->find($variantId);
-
-        if (isset($cart[$variantId])) {
-            $cart[$variantId]['quantity'] += $request->quantity;
-        } else {
-            $cart[$variantId] = [
-                'name' => $variant->product->name,
-                'quantity' => $request->quantity,
-                'price' => $variant->product->price,
-                'size' => $variant->size,
-                'color' => $variant->color,
-                'image' => $variant->product->image_url,
-                'slug' => $variant->product->slug
-            ];
-        }
-
-        session()->put('cart', $cart);
+        $this->cartService->add($request->variant_id, $request->quantity);
 
         if ($request->expectsJson()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Product added to bag!',
-                'cart_count' => count($cart)
+                'message' => 'Đã thêm sản phẩm vào giỏ!',
+                'cart_count' => $this->cartService->count(),
             ]);
         }
 
-        return redirect()->back()->with('success', 'Product added to bag!');
+        return redirect()->back()->with('success', 'Đã thêm sản phẩm vào giỏ!');
     }
 
     /**
@@ -54,20 +40,15 @@ class CartController extends Controller
     public function remove(Request $request)
     {
         $request->validate([
-            'variant_id' => 'required'
+            'variant_id' => 'required',
         ]);
 
-        $cart = session()->get('cart', []);
-        
-        if (isset($cart[$request->variant_id])) {
-            unset($cart[$request->variant_id]);
-            session()->put('cart', $cart);
-        }
+        $this->cartService->remove($request->variant_id);
 
         if ($request->expectsJson()) {
             return response()->json([
                 'success' => true,
-                'cart_count' => count($cart)
+                'cart_count' => $this->cartService->count(),
             ]);
         }
 

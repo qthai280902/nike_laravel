@@ -48,7 +48,7 @@
                         </div>
                         <div>
                             <p class="text-nike-gray-500 uppercase text-[10px] font-bold tracking-widest mb-1">Vai trò tài khoản</p>
-                            <p class="text-lg font-medium uppercase font-bold text-nike-red">{{ $user->role }}</p>
+                            <p class="text-lg font-medium uppercase font-bold text-nike-red">{{ match($user->role) { 'customer' => 'Khách hàng', 'seller' => 'Người bán', 'admin' => 'Quản trị viên', default => $user->role } }}</p>
                         </div>
                         <div>
                             <p class="text-nike-gray-500 uppercase text-[10px] font-bold tracking-widest mb-1">Thành viên từ</p>
@@ -103,14 +103,14 @@
                                     <td class="px-6 py-6">
                                         <div class="flex -space-x-3 overflow-hidden">
                                             @foreach($order->items as $item)
-                                                <img src="{{ $item->product->image_url }}" alt="Item" class="inline-block h-10 w-10 rounded-full ring-2 ring-white object-cover bg-nike-gray-100">
+                                                <img src="{{ $item->variant?->product?->image_url ?? asset('images/hero.png') }}" onerror="this.onerror=null; this.src='{{ asset('images/hero.png') }}'" alt="Item" class="inline-block h-10 w-10 rounded-full ring-2 ring-white object-cover bg-nike-gray-100">
                                             @endforeach
                                         </div>
                                     </td>
                                     <td class="px-6 py-6 font-black tracking-tighter">{{ number_format($order->total_price, 0, ',', '.') }}₫</td>
                                     <td class="px-6 py-6">
                                         <span class="px-3 py-1 bg-nike-black text-white text-[9px] font-black uppercase tracking-widest">
-                                            {{ $order->status }}
+                                            {{ match($order->status) { 'pending' => 'Đang xử lý', 'paid' => 'Đã thanh toán', 'shipped' => 'Đang giao', 'delivered' => 'Đã giao', 'cancelled' => 'Đã hủy', default => $order->status } }}
                                         </span>
                                     </td>
                                 </tr>
@@ -136,7 +136,7 @@
 
                             <a href="{{ route('catalog.show', $product->slug) }}" class="block">
                                 <div class="aspect-square bg-nike-gray-100 mb-4 overflow-hidden">
-                                    <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                    <img src="{{ $product->image_url }}" onerror="this.onerror=null; this.src='{{ asset('images/hero.png') }}'" alt="{{ $product->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                                 </div>
                                 <p class="text-[11px] font-black uppercase tracking-tight">{{ $product->name }}</p>
                                 <p class="text-[10px] text-nike-gray-500 uppercase">{{ $product->category->name }}</p>

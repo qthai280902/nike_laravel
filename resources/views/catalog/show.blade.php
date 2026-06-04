@@ -3,6 +3,13 @@
 @section('title', $product->name . ' | Nike Hybrid')
 
 @section('content')
+    @php
+        $fallbackImage = asset('images/hero.png');
+        $highlights = collect($product->highlights ?? [])->filter()->values();
+        $reviewCount = (int) ($product->approved_reviews_count ?? $product->approvedReviews->count());
+        $averageRating = $product->approved_reviews_avg_rating ? number_format((float) $product->approved_reviews_avg_rating, 1) : null;
+    @endphp
+
     </div>
 </div>
 
@@ -56,7 +63,7 @@
         {{-- Product Image Gallery --}}
         <div class="w-full lg:w-2/3 space-y-4">
             <div class="bg-nike-gray-100 aspect-square overflow-hidden no-border-radius">
-                <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
+                <img src="{{ $product->image_url }}" alt="{{ $product->name }}" onerror="this.onerror=null; this.src='{{ $fallbackImage }}'" class="w-full h-full object-contain p-6">
             </div>
         </div>
 
@@ -64,7 +71,7 @@
         <div class="w-full lg:w-1/3">
             <div class="sticky top-28">
                 <h1 class="text-3xl font-nike-display uppercase leading-tight mb-2">{{ $product->name }}</h1>
-                <p class="text-nike-gray-500 font-nike-body mb-6">{{ $product->category->name }}</p>
+                <p class="text-nike-gray-500 font-nike-body mb-6">{{ match(strtolower($product->category->name)) { 'men' => 'Nam', 'women' => 'Nữ', 'kids' => 'Trẻ em', 'lifestyle' => 'Phong cách sống', 'running' => 'Chạy bộ', 'basketball' => 'Bóng rổ', 'training' => 'Tập luyện', 'yoga' => 'Yoga', 'shoes' => 'Giày', 'clothing' => 'Quần áo', 'accessories' => 'Phụ kiện', default => $product->category->name } }}</p>
                 <p class="text-xl font-nike-body font-medium mb-12">{{ number_format($product->price, 0, ',', '.') }}₫</p>
 
                 {{-- Sizing Section --}}
@@ -125,6 +132,77 @@
                     <p>{{ $product->description }}</p>
                 </div>
             </div>
+        </div>
+    </div>
+</section>
+
+<section class="mx-auto max-w-[1440px] px-6 pb-12 md:px-12">
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <article class="border-t border-nike-black pt-6">
+            <p class="text-[10px] font-black uppercase tracking-widest text-nike-gray-400">Câu chuyện sản phẩm</p>
+            <h2 class="mt-3 text-2xl font-black uppercase leading-none tracking-tight text-nike-black">Từ catalog cửa hàng</h2>
+            <p class="mt-5 text-sm font-medium leading-7 text-nike-gray-600">
+                {{ $product->product_story ?: $product->description }}
+            </p>
+        </article>
+
+        <article class="border-t border-nike-black pt-6">
+            <p class="text-[10px] font-black uppercase tracking-widest text-nike-gray-400">Điểm nổi bật</p>
+            <h2 class="mt-3 text-2xl font-black uppercase leading-none tracking-tight text-nike-black">Chi tiết đáng chú ý</h2>
+            <ul class="mt-5 space-y-3 text-sm font-bold leading-6 text-nike-black">
+                @forelse($highlights as $highlight)
+                    <li class="flex gap-3">
+                        <span class="mt-2 h-1.5 w-1.5 shrink-0 bg-nike-black"></span>
+                        <span>{{ $highlight }}</span>
+                    </li>
+                @empty
+                    <li>{{ $product->description }}</li>
+                @endforelse
+            </ul>
+        </article>
+
+        <article class="border-t border-nike-black pt-6">
+            <p class="text-[10px] font-black uppercase tracking-widest text-nike-gray-400">Cách phối đồ / chăm sóc</p>
+            <h2 class="mt-3 text-2xl font-black uppercase leading-none tracking-tight text-nike-black">Giữ sản phẩm bền đẹp</h2>
+            <p class="mt-5 text-sm font-medium leading-7 text-nike-gray-600">
+                {{ $product->care_instructions ?: 'Lau sạch nhẹ nhàng sau khi dùng, để khô tự nhiên và tránh nhiệt cao để giữ form sản phẩm.' }}
+            </p>
+        </article>
+    </div>
+</section>
+
+<section class="border-t border-nike-gray-100 bg-nike-snow px-6 py-12 md:px-12">
+    <div class="mx-auto max-w-[1440px]">
+        <div class="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+            <div>
+                <p class="text-xs font-black uppercase tracking-widest text-nike-gray-400">Đánh giá sản phẩm</p>
+                <h2 class="mt-2 text-3xl font-black uppercase leading-none tracking-tight text-nike-black">
+                    Nhận xét từ khách hàng
+                </h2>
+            </div>
+            <div class="text-left md:text-right">
+                <p class="text-2xl font-black text-nike-black">{{ $averageRating ? $averageRating.'/5' : 'Chưa có' }}</p>
+                <p class="text-[10px] font-black uppercase tracking-widest text-nike-gray-400">{{ $reviewCount }} đánh giá đã duyệt</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+            @forelse($product->approvedReviews as $review)
+                <article class="border border-nike-gray-150 bg-white p-5">
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <p class="text-sm font-black uppercase leading-tight text-nike-black">{{ $review->title ?: 'Đánh giá sản phẩm' }}</p>
+                            <p class="mt-1 text-[10px] font-bold uppercase tracking-widest text-nike-gray-400">{{ $review->author_name }}</p>
+                        </div>
+                        <span class="shrink-0 text-sm font-black text-nike-black">{{ $review->rating }}/5</span>
+                    </div>
+                    <p class="mt-4 text-sm font-medium leading-6 text-nike-gray-600">{{ $review->comment }}</p>
+                </article>
+            @empty
+                <div class="col-span-full border border-dashed border-nike-gray-200 bg-white p-8 text-center">
+                    <p class="text-xs font-black uppercase tracking-widest text-nike-gray-400">Sản phẩm này chưa có đánh giá đã duyệt.</p>
+                </div>
+            @endforelse
         </div>
     </div>
 </section>
@@ -211,7 +289,7 @@
                 
                 // 1. HIỆN MODAL THÀNH CÔNG
                 if (typeof showSuccessModal === 'function') {
-                    showSuccessModal('Bản phẩm đã có trong túi');
+                    showSuccessModal('Sản phẩm đã được thêm vào giỏ');
                 }
                 
                 // 2. GIỮ ĐÚNG 1 GIÂY (1000MS)

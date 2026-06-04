@@ -25,16 +25,21 @@ class MarketplaceService
     /**
      * Create a new marketplace listing.
      *
-     * @param  array{product_variant_id: string, asking_price: numeric, condition: string, seller_description?: ?string}  $data
+     * @param  array{product_variant_id?: ?string, product_name?: ?string, brand?: ?string, size?: ?string, color?: ?string, image_url?: ?string, asking_price: numeric, condition: string, seller_description: string}  $data
      */
     public function createListing(array $data, int $userId): MarketplaceListing
     {
         return MarketplaceListing::create([
             'user_id' => $userId,
-            'product_variant_id' => $data['product_variant_id'],
+            'product_variant_id' => $data['product_variant_id'] ?? null,
+            'product_name' => $data['product_name'] ?? null,
+            'brand' => ($data['brand'] ?? null) ?: 'Nike',
+            'size' => $data['size'] ?? null,
+            'color' => $data['color'] ?? null,
+            'image_url' => $data['image_url'] ?? null,
             'asking_price' => $data['asking_price'],
             'condition' => $data['condition'],
-            'seller_description' => $data['seller_description'] ?? null,
+            'seller_description' => $data['seller_description'],
             'status' => MarketplaceListingStatus::Pending,
         ]);
     }

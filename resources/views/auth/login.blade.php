@@ -22,6 +22,13 @@
                 <div class="w-full max-w-sm">
                     <h2 class="text-3xl font-nike-display uppercase mb-10">Nhập email của bạn để tham gia hoặc đăng nhập.</h2>
                     
+                    @if(session('success'))
+                        <div class="mb-6 p-4 bg-nike-black text-white text-xs font-bold uppercase tracking-widest rounded flex items-center space-x-3">
+                            <svg class="w-4 h-4 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span>{{ session('success') }}</span>
+                        </div>
+                    @endif
+
                     <form method="POST" action="{{ route('login') }}" class="space-y-6">
                         @csrf
                         <div>

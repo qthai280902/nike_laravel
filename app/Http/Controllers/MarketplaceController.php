@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Enums\MarketplaceListingCondition;
+use App\Enums\MarketplaceListingStatus;
+use App\Models\MarketplaceListing;
 use App\Models\Product;
 use App\Services\MarketplaceService;
 use Illuminate\Http\JsonResponse;
@@ -41,10 +43,15 @@ class MarketplaceController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'product_variant_id' => ['required', 'exists:product_variants,id'],
+            'product_variant_id' => ['nullable', 'exists:product_variants,id'],
+            'product_name' => ['required_without:product_variant_id', 'nullable', 'string', 'max:160'],
+            'brand' => ['nullable', 'string', 'max:80'],
+            'size' => ['required_without:product_variant_id', 'nullable', 'string', 'max:40'],
+            'color' => ['required_without:product_variant_id', 'nullable', 'string', 'max:80'],
+            'image_url' => ['nullable', 'url', 'max:2048'],
             'asking_price' => ['required', 'numeric', 'min:0'],
             'condition' => ['required', Rule::enum(MarketplaceListingCondition::class)],
-            'seller_description' => ['nullable', 'string', 'max:1000'],
+            'seller_description' => ['required', 'string', 'max:1500'],
         ]);
 
         $this->marketplaceService->createListing($validated, auth()->id());
@@ -90,5 +97,19 @@ class MarketplaceController extends Controller
                 'stock' => $variant->stock,
             ]),
         ]);
+    }
+
+    /**
+     * Display the specified marketplace listing detail.
+     */
+    public function show(MarketplaceListing $listing): View
+    {
+        if ($listing->status !== MarketplaceListingStatus::Active) {
+            abort(404);
+        }
+
+        $listing->load(['user', 'variant.product.category']);
+
+        return view('marketplace.show', compact('listing'));
     }
 }

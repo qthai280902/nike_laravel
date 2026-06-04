@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LandingArticle;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\View\View;
@@ -26,7 +27,33 @@ class HomeController extends Controller
             ->limit(3)
             ->get();
 
-        return view('welcome', compact('heroProduct', 'secondaryProducts'));
+        $landingArticles = LandingArticle::where('is_published', true)
+            ->where(function ($query): void {
+                $query->whereNull('published_at')
+                    ->orWhere('published_at', '<=', now());
+            })
+            ->orderBy('position', 'asc')
+            ->orderBy('published_at', 'desc')
+            ->limit(3)
+            ->get();
+
+        return view('welcome', compact('heroProduct', 'secondaryProducts', 'landingArticles'));
+    }
+
+    /**
+     * Display a published landing article.
+     */
+    public function showArticle(string $slug): View
+    {
+        $article = LandingArticle::where('slug', $slug)
+            ->where('is_published', true)
+            ->where(function ($query): void {
+                $query->whereNull('published_at')
+                    ->orWhere('published_at', '<=', now());
+            })
+            ->firstOrFail();
+
+        return view('articles.show', compact('article'));
     }
 
     /**

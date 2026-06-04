@@ -15,7 +15,7 @@ class ProfileController extends Controller
         $user = Auth::user();
 
         $orders = $user->orders()
-            ->with(['items.product'])
+            ->with(['items.variant.product'])
             ->latest()
             ->get();
 

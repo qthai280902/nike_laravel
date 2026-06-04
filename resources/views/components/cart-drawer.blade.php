@@ -4,7 +4,7 @@
     <div class="flex flex-col h-full h-screen">
         {{-- Header --}}
         <div class="px-6 py-6 border-b border-nike-gray-200 flex justify-between items-center bg-white">
-            <h2 class="text-xl font-nike-display uppercase">Bag</h2>
+            <h2 class="text-xl font-nike-display uppercase">Giỏ hàng</h2>
             <button onclick="toggleCart()" class="p-2 hover:bg-nike-gray-100 rounded-full">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>

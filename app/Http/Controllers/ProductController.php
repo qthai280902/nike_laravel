@@ -79,6 +79,7 @@ class ProductController extends Controller
         }
 
         $products = Product::where('name', 'LIKE', "%{$query}%")
+            ->where('status', 'active')
             ->with('category')
             ->limit(5)
             ->get();

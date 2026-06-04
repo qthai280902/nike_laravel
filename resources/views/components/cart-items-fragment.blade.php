@@ -1,9 +1,8 @@
 @php
-    $cart = session()->get('cart', []);
-    $total = array_reduce($cart, function($carry, $item) {
-        return $carry + ($item['price'] * $item['quantity']);
-    }, 0);
-    $count = count($cart);
+    $cartService = app(\App\Services\CartService::class);
+    $cart = $cartService->items();
+    $total = $cartService->subtotal();
+    $count = $cartService->count();
 @endphp
 
 <div id="cart-content-wrapper" class="flex flex-col h-full">
@@ -12,13 +11,13 @@
         @forelse($cart as $id => $item)
             <div class="flex space-x-4 animate-[fade-in_0.3s_ease-out] group">
                 <div class="w-20 h-20 bg-nike-gray-100 flex-shrink-0 shadow-sm">
-                    <img src="{{ $item['image'] }}" alt="{{ $item['name'] }}" class="w-full h-full object-cover">
+                    <img src="{{ $item['image'] }}" alt="{{ $item['product_name'] }}" class="w-full h-full object-cover">
                 </div>
                 <div class="flex-grow relative">
-                    <h4 class="font-bold text-[13px] text-nike-black uppercase pr-8 tracking-tighter leading-tight">{{ $item['name'] }}</h4>
-                    <p class="text-nike-gray-500 text-[11px] font-medium">Kích cỡ: {{ $item['size'] }} | Số lượng: {{ $item['quantity'] }}</p>
+                    <h4 class="font-bold text-[13px] text-nike-black uppercase pr-8 tracking-tighter leading-tight">{{ $item['product_name'] }}</h4>
+                    <p class="text-nike-gray-500 text-[11px] font-medium">Màu sắc: {{ $item['color'] ?? '' }} | Kích cỡ: {{ $item['size'] ?? '' }} | Số lượng: {{ $item['qty'] }}</p>
                     <div class="flex justify-between items-center mt-3">
-                        <span class="font-bold text-sm">{{ number_format($item['price'] * $item['quantity'], 0, ',', '.') }}₫</span>
+                        <span class="font-bold text-sm">{{ number_format($item['price'] * $item['qty'], 0, ',', '.') }}₫</span>
                         <button 
                             onclick="removeFromCart('{{ $id }}')"
                             class="text-[10px] uppercase font-black text-nike-gray-400 hover:text-nike-red tracking-widest transition-colors"

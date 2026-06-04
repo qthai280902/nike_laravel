@@ -5,8 +5,8 @@ namespace App\Services;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\ProductVariant;
-use Illuminate\Support\Facades\DB;
 use Exception;
+use Illuminate\Support\Facades\DB;
 
 class CheckoutService
 {
@@ -22,7 +22,7 @@ class CheckoutService
         $cartItems = $this->cartService->getItems();
 
         if ($cartItems->isEmpty()) {
-            throw new Exception("Cart is empty");
+            throw new Exception('Cart is empty');
         }
 
         return DB::transaction(function () use ($cartItems, $shippingData) {
@@ -45,7 +45,7 @@ class CheckoutService
                     ->lockForUpdate()
                     ->first();
 
-                if (!$variant || $variant->stock < $item['qty']) {
+                if (! $variant || $variant->stock < $item['qty']) {
                     throw new Exception("Stock mismatch for product: {$item['product_name']}");
                 }
 

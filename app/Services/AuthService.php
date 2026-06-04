@@ -14,11 +14,11 @@ class AuthService
      */
     public function register(array $data): User
     {
-        $displayId = '#' . str_pad(random_int(100000, 999999), 6, '0', STR_PAD_LEFT);
-        
+        $displayId = '#'.str_pad(random_int(100000, 999999), 6, '0', STR_PAD_LEFT);
+
         // Ensure unique display_id
         while (User::where('display_id', $displayId)->exists()) {
-            $displayId = '#' . str_pad(random_int(100000, 999999), 6, '0', STR_PAD_LEFT);
+            $displayId = '#'.str_pad(random_int(100000, 999999), 6, '0', STR_PAD_LEFT);
         }
 
         $user = User::create([
@@ -40,6 +40,7 @@ class AuthService
         if (Auth::attempt($credentials, $remember)) {
             $this->syncCart();
             request()->session()->regenerate();
+
             return true;
         }
 
@@ -58,13 +59,13 @@ class AuthService
 
     /**
      * Sync guest cart to user session upon login.
-     * In this implementation, the session-based cart persists automatically 
-     * across login/logout unless explicitly cleared, but we regenerate 
+     * In this implementation, the session-based cart persists automatically
+     * across login/logout unless explicitly cleared, but we regenerate
      * the session ID for security.
      */
     protected function syncCart(): void
     {
-        // If we were using a Database-backed cart, we would move rows from 
+        // If we were using a Database-backed cart, we would move rows from
         // a 'guest_id' to 'user_id' here. Since we use pure Session for now,
         // we just ensure the 'nike_cart' key is preserved.
         $cart = Session::get('nike_cart');

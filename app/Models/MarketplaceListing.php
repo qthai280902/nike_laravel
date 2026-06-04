@@ -18,6 +18,11 @@ class MarketplaceListing extends Model
     protected $fillable = [
         'user_id',
         'product_variant_id',
+        'product_name',
+        'brand',
+        'size',
+        'color',
+        'image_url',
         'asking_price',
         'condition',
         'seller_description',
@@ -68,6 +73,66 @@ class MarketplaceListing extends Model
     public function variant(): BelongsTo
     {
         return $this->belongsTo(ProductVariant::class, 'product_variant_id');
+    }
+
+    /**
+     * Display name for both catalog-linked and freeform listings.
+     */
+    public function getDisplayNameAttribute(): string
+    {
+        return $this->product_name
+            ?: $this->variant?->product?->name
+            ?: 'Sản phẩm chưa có tên';
+    }
+
+    /**
+     * Display brand for both catalog-linked and freeform listings.
+     */
+    public function getDisplayBrandAttribute(): string
+    {
+        return $this->brand ?: 'Nike';
+    }
+
+    /**
+     * Display image with a safe local fallback.
+     */
+    public function getDisplayImageUrlAttribute(): string
+    {
+        $imageUrl = $this->image_url ?: $this->variant?->product?->image_url;
+
+        if (empty($imageUrl)) {
+            return Product::fallbackImageUrl();
+        }
+
+        if (str_starts_with($imageUrl, 'http://') || str_starts_with($imageUrl, 'https://')) {
+            return $imageUrl;
+        }
+
+        return asset(ltrim($imageUrl, '/'));
+    }
+
+    /**
+     * Display size for both catalog-linked and freeform listings.
+     */
+    public function getDisplaySizeAttribute(): string
+    {
+        return $this->size ?: $this->variant?->size ?: 'Chưa rõ';
+    }
+
+    /**
+     * Display color for both catalog-linked and freeform listings.
+     */
+    public function getDisplayColorAttribute(): string
+    {
+        return $this->color ?: $this->variant?->color ?: 'Chưa rõ';
+    }
+
+    /**
+     * Display source type.
+     */
+    public function getDisplaySourceAttribute(): string
+    {
+        return $this->product_variant_id ? 'Catalog cửa hàng' : 'Tin đăng tự nhập';
     }
 
     /**

@@ -1,10 +1,24 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" data-theme="light" data-theme-preference="system">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Nike Hybrid | Bản Sắc Thể Thao')</title>
-    <!-- Montserrat Font -->
+    <!-- Be Vietnam Pro Font -->
+    <script>
+        (() => {
+            try {
+                const key = 'nike-storefront-theme';
+                const preference = localStorage.getItem(key) || 'system';
+                const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                document.documentElement.dataset.theme = preference === 'system' ? (isSystemDark ? 'dark' : 'light') : preference;
+                document.documentElement.dataset.themePreference = preference;
+            } catch (error) {
+                document.documentElement.dataset.theme = 'light';
+                document.documentElement.dataset.themePreference = 'system';
+            }
+        })();
+    </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-white text-nike-black antialiased overflow-x-hidden font-nike-body">
@@ -17,7 +31,7 @@
             <span class="text-nike-gray-300">|</span>
             <a href="{{ route('stores') }}" class="hover:text-nike-gray-500 {{ request()->routeIs('stores') ? 'text-nike-black underline' : '' }}">Tìm cửa hàng</a>
             <span class="text-nike-gray-300">|</span>
-            <a href="#" class="hover:text-nike-gray-500">Hỗ trợ</a>
+            <a href="{{ route('support.create') }}" class="hover:text-nike-gray-500 {{ request()->routeIs('support.create') ? 'text-nike-black underline' : '' }}">Hỗ trợ</a>
         </div>
 
         {{-- Main Nav --}}
@@ -59,6 +73,17 @@
                         class="bg-nike-gray-100 border-none rounded-full py-2 pl-11 pr-5 text-sm focus:ring-2 focus:ring-nike-gray-200 w-48 transition-all focus:w-64 font-medium">
                     <div id="search-suggestions" class="absolute top-12 left-0 right-0 bg-white border border-nike-gray-100 shadow-2xl z-50 hidden">
                         <div id="suggestions-list" class="divide-y divide-nike-gray-50"></div>
+                    </div>
+                </div>
+
+                <div class="relative" data-theme-menu>
+                    <button type="button" data-theme-menu-button class="flex h-9 w-9 items-center justify-center rounded-full border border-nike-gray-200 bg-white text-nike-black transition hover:border-nike-black" aria-label="Đổi giao diện">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 3v1m0 16v1m8.66-13.66-.7.7M4.04 19.96l-.7.7M21 12h-1M4 12H3m16.96 7.96-.7-.7M4.04 4.04l-.7-.7M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    </button>
+                    <div data-theme-menu-panel class="absolute right-0 top-12 z-50 hidden w-44 border border-nike-gray-150 bg-white p-2 shadow-2xl">
+                        <button type="button" data-theme-option="light" class="w-full px-3 py-2 text-left text-xs font-bold uppercase tracking-widest text-nike-black transition hover:bg-nike-gray-100">Sáng</button>
+                        <button type="button" data-theme-option="dark" class="w-full px-3 py-2 text-left text-xs font-bold uppercase tracking-widest text-nike-black transition hover:bg-nike-gray-100">Tối</button>
+                        <button type="button" data-theme-option="system" class="w-full px-3 py-2 text-left text-xs font-bold uppercase tracking-widest text-nike-black transition hover:bg-nike-gray-100">Hệ thống</button>
                     </div>
                 </div>
 
@@ -128,7 +153,7 @@
                         suggestionsList.innerHTML = data.map(item => `
                             <a href="/catalog/products/${item.slug}" class="flex items-center p-4 hover:bg-nike-gray-50 transition-colors group">
                                 <div class="w-12 h-12 bg-nike-gray-100 flex-shrink-0">
-                                    <img src="${item.image}" class="w-full h-full object-cover">
+                                    <img src="${item.image}" onerror="this.onerror=null; this.src='/images/hero.png'" class="w-full h-full object-cover">
                                 </div>
                                 <div class="ml-4">
                                     <p class="text-[13px] font-bold uppercase tracking-tight  group-hover:text-nike-gray-500">${item.name}</p>

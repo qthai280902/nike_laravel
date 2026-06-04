@@ -24,7 +24,7 @@ class CartService
     public function add(string $variantId, int $qty = 1): void
     {
         $cart = $this->getItems();
-        
+
         $variant = ProductVariant::with('product')->findOrFail($variantId);
 
         if ($cart->has($variantId)) {
@@ -38,6 +38,10 @@ class CartService
                 'variant_name' => "{$variant->color} - {$variant->size}",
                 'price' => $variant->price_override ?? $variant->product->price,
                 'qty' => $qty,
+                'image' => $variant->product->image_url,
+                'size' => $variant->size,
+                'color' => $variant->color,
+                'slug' => $variant->product->slug,
             ]);
         }
 
@@ -67,6 +71,30 @@ class CartService
      */
     public function getTotal(): float
     {
-        return $this->getItems()->sum(fn($item) => $item['price'] * $item['qty']);
+        return $this->getItems()->sum(fn ($item) => $item['price'] * $item['qty']);
+    }
+
+    /**
+     * Get all items.
+     */
+    public function items(): Collection
+    {
+        return $this->getItems();
+    }
+
+    /**
+     * Get count of unique items in cart.
+     */
+    public function count(): int
+    {
+        return $this->getItems()->count();
+    }
+
+    /**
+     * Get subtotal (alias to getTotal).
+     */
+    public function subtotal(): float
+    {
+        return $this->getTotal();
     }
 }
