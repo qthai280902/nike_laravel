@@ -45,15 +45,15 @@
                         <div class="p-6 flex items-center justify-between gap-4">
                             <div class="flex items-center space-x-4">
                                 <div class="w-16 h-16 rounded bg-zinc-900 border border-zinc-800 overflow-hidden flex-shrink-0">
-                                    <img src="{{ $item->variant->product->image_url ?? '/images/hero.png' }}" alt="" class="w-full h-full object-cover">
+                                    <img src="{{ $item->variant?->product?->image_url ?? '/images/hero.png' }}" alt="" class="w-full h-full object-cover">
                                 </div>
                                 <div>
-                                    <h5 class="font-bold text-sm text-white uppercase tracking-tight">{{ $item->variant->product->name ?? 'Sản phẩm không tồn tại' }}</h5>
+                                    <h5 class="font-bold text-sm text-white uppercase tracking-tight">{{ $item->variant?->product?->name ?? 'Sản phẩm không tồn tại' }}</h5>
                                     <p class="text-xs text-zinc-400 mt-1">
-                                        Size: {{ $item->variant->size }} | Màu: {{ $item->variant->color }}
+                                        Size: {{ $item->variant?->size ?? 'Không rõ' }} | Màu: {{ $item->variant?->color ?? 'Không rõ' }}
                                     </p>
                                     <p class="text-xs text-zinc-500 mt-0.5">
-                                        SKU: {{ $item->variant->sku }}
+                                        SKU: {{ $item->variant?->sku ?? 'Không rõ' }}
                                     </p>
                                 </div>
                             </div>
@@ -128,6 +128,38 @@
                             <span class="px-3 py-1 rounded-full bg-zinc-500/10 text-zinc-500 text-xs font-bold uppercase">{{ $order->status }}</span>
                         @endif
                     </div>
+                </div>
+
+                <div class="pt-4 border-t border-zinc-800">
+                    <p class="text-zinc-500 text-xs uppercase tracking-wider">Trạng thái hoàn kho</p>
+                    @if($order->status === 'cancelled')
+                        @if($order->inventory_returned_at)
+                            <div class="mt-3 rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-4">
+                                <span class="inline-flex rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-bold uppercase text-emerald-400">Đã hoàn kho</span>
+                                <dl class="mt-4 space-y-2 text-xs text-zinc-300">
+                                    <div class="flex justify-between gap-4">
+                                        <dt class="text-zinc-500">Thời gian</dt>
+                                        <dd class="font-bold text-white">{{ $order->inventory_returned_at->format('H:i d/m/Y') }}</dd>
+                                    </div>
+                                    <div class="flex justify-between gap-4">
+                                        <dt class="text-zinc-500">Admin</dt>
+                                        <dd class="font-bold text-white">{{ $order->inventoryReturnedBy?->name ?? 'Không rõ' }}</dd>
+                                    </div>
+                                </dl>
+                                @if($order->inventory_return_note)
+                                    <p class="mt-3 rounded border border-zinc-800 bg-zinc-950 p-3 text-xs leading-5 text-zinc-400">{{ $order->inventory_return_note }}</p>
+                                @endif
+                            </div>
+                        @else
+                            <div class="mt-3 rounded-lg border border-yellow-500/20 bg-yellow-500/10 p-4 text-xs font-bold uppercase tracking-wider text-yellow-400">
+                                Chưa hoàn kho
+                            </div>
+                        @endif
+                    @else
+                        <div class="mt-3 rounded-lg border border-zinc-800 bg-zinc-950/60 p-4 text-xs font-bold uppercase tracking-wider text-zinc-500">
+                            Không áp dụng
+                        </div>
+                    @endif
                 </div>
 
                 {{-- Status Update Form --}}

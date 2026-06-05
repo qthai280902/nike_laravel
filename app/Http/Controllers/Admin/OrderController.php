@@ -4,12 +4,17 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Services\InventoryReturnService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class OrderController extends Controller
 {
+    public function __construct(
+        private readonly InventoryReturnService $inventoryReturnService
+    ) {}
+
     /**
      * Display a listing of the orders.
      */
@@ -46,7 +51,7 @@ class OrderController extends Controller
      */
     public function show(Order $order): View
     {
-        $order->load(['user', 'items.variant.product']);
+        $order->load(['user', 'items.variant.product', 'inventoryReturnedBy']);
 
         return view('admin.orders.show', compact('order'));
     }
@@ -75,7 +80,7 @@ class OrderController extends Controller
         // - cancelled is locked
 
         if ($currentStatus === 'delivered' || $currentStatus === 'cancelled') {
-            return back()->with('error', 'Không thể thay đổi trạng thái của đơn hàng đã giao hoặc đã hủy.');
+            return back()->with('error', 'Không thể đổi trạng thái đơn đã hoàn tất/đã hủy.');
         }
 
         $allowed = false;
@@ -91,7 +96,19 @@ class OrderController extends Controller
             return back()->with('error', 'Chuyển đổi trạng thái từ "'.$this->getStatusLabel($currentStatus).'" sang "'.$this->getStatusLabel($newStatus).'" không hợp lệ.');
         }
 
+        $wasInventoryReturned = $order->inventory_returned_at !== null;
+
         $order->update(['status' => $newStatus]);
+
+        if ($newStatus === 'cancelled') {
+            $this->inventoryReturnService->returnForCancelledOrder($order->fresh(), $request->user());
+
+            if ($wasInventoryReturned) {
+                return back()->with('info', 'Hủy đơn thành công nhưng đơn đã được hoàn kho trước đó.');
+            }
+
+            return back()->with('success', 'Hủy đơn thành công và đã hoàn kho.');
+        }
 
         return back()->with('success', 'Đã cập nhật trạng thái đơn hàng thành công.');
     }

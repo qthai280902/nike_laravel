@@ -78,6 +78,9 @@
                                     <span class="px-2 py-0.5 rounded bg-zinc-500/10 text-zinc-500 text-[10px] font-bold uppercase">Đã giao</span>
                                 @elseif($order->status === 'cancelled')
                                     <span class="px-2 py-0.5 rounded bg-red-500/10 text-red-500 text-[10px] font-bold uppercase">Đã hủy</span>
+                                    @if($order->inventory_returned_at)
+                                        <span class="ml-2 px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-bold uppercase">Đã hoàn kho</span>
+                                    @endif
                                 @else
                                     <span class="px-2 py-0.5 rounded bg-zinc-500/10 text-zinc-500 text-[10px] font-bold uppercase">{{ $order->status }}</span>
                                 @endif

@@ -22,7 +22,20 @@ class Order extends Model
         'shipping_phone',
         'shipping_address',
         'payment_method',
+        'inventory_returned_at',
+        'inventory_returned_by_user_id',
+        'inventory_return_note',
     ];
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'inventory_returned_at' => 'datetime',
+        ];
+    }
 
     /**
      * Get the user that placed the order.
@@ -38,5 +51,13 @@ class Order extends Model
     public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    /**
+     * Get the admin who returned inventory for a cancelled order.
+     */
+    public function inventoryReturnedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'inventory_returned_by_user_id');
     }
 }

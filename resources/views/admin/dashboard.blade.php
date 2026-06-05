@@ -79,6 +79,9 @@
                                 <td class="px-5 py-4 font-bold text-white">{{ number_format($order->total_price, 0, ',', '.') }}₫</td>
                                 <td class="px-5 py-4">
                                     <span class="rounded px-2 py-1 text-[10px] font-bold uppercase {{ $statusMeta[1] }}">{{ $statusMeta[0] }}</span>
+                                    @if($order->status === 'cancelled' && $order->inventory_returned_at)
+                                        <span class="ml-2 rounded bg-emerald-500/10 px-2 py-1 text-[10px] font-bold uppercase text-emerald-400">Đã hoàn kho</span>
+                                    @endif
                                 </td>
                             </tr>
                         @empty
