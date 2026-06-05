@@ -144,9 +144,49 @@ class RoutingQaTest extends TestCase
     }
 
     #[Test]
-    public function guest_accessing_marketplace_redirects_to_login(): void
+    public function guest_can_access_marketplace_homepage(): void
     {
         $response = $this->get('/marketplace');
+        $response->assertOk();
+    }
+
+    #[Test]
+    public function guest_can_access_active_marketplace_details(): void
+    {
+        $listing = MarketplaceListing::create([
+            'user_id' => $this->customer->id,
+            'product_variant_id' => $this->variant->id,
+            'asking_price' => 1800000,
+            'condition' => MarketplaceListingCondition::LikeNew,
+            'seller_description' => 'Tin active xem public.',
+            'status' => MarketplaceListingStatus::Active,
+        ]);
+
+        $response = $this->get("/marketplace/{$listing->id}");
+        $response->assertOk();
+        $response->assertSee('Tin active xem public.');
+    }
+
+    #[Test]
+    public function guest_cannot_access_inactive_marketplace_details(): void
+    {
+        $listing = MarketplaceListing::create([
+            'user_id' => $this->customer->id,
+            'product_variant_id' => $this->variant->id,
+            'asking_price' => 1800000,
+            'condition' => MarketplaceListingCondition::LikeNew,
+            'seller_description' => 'Tin pending không public.',
+            'status' => MarketplaceListingStatus::Pending,
+        ]);
+
+        $response = $this->get("/marketplace/{$listing->id}");
+        $response->assertNotFound();
+    }
+
+    #[Test]
+    public function guest_marketplace_create_redirects_to_login(): void
+    {
+        $response = $this->get('/marketplace/create');
         $response->assertRedirect('/login');
     }
 
@@ -179,6 +219,20 @@ class RoutingQaTest extends TestCase
     public function guest_can_access_support_page(): void
     {
         $response = $this->get('/support');
+        $response->assertOk();
+    }
+
+    #[Test]
+    public function guest_can_access_stores_page(): void
+    {
+        $response = $this->get('/stores');
+        $response->assertOk();
+    }
+
+    #[Test]
+    public function guest_can_access_public_user_profile(): void
+    {
+        $response = $this->get("/users/{$this->customer->id}");
         $response->assertOk();
     }
 
@@ -230,5 +284,51 @@ class RoutingQaTest extends TestCase
     {
         $response = $this->actingAs($this->admin)->get('/admin/landing-articles');
         $response->assertOk();
+    }
+
+    #[Test]
+    public function admin_can_access_release_candidate_admin_sections(): void
+    {
+        foreach ($this->adminSectionPaths() as $path) {
+            $this->actingAs($this->admin)
+                ->get($path)
+                ->assertOk();
+        }
+    }
+
+    #[Test]
+    public function customer_cannot_access_release_candidate_admin_sections(): void
+    {
+        foreach ($this->adminSectionPaths() as $path) {
+            $this->actingAs($this->customer)
+                ->get($path)
+                ->assertNotFound();
+        }
+    }
+
+    #[Test]
+    public function guest_cannot_access_release_candidate_admin_sections(): void
+    {
+        foreach ($this->adminSectionPaths() as $path) {
+            $this->get($path)->assertRedirect('/login');
+        }
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function adminSectionPaths(): array
+    {
+        return [
+            '/admin/dashboard',
+            '/admin/members',
+            '/admin/reports',
+            '/admin/support',
+            '/admin/orders',
+            '/admin/products',
+            '/admin/marketplace',
+            '/admin/reviews',
+            '/admin/landing-articles',
+        ];
     }
 }

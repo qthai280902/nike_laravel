@@ -29,10 +29,10 @@
             <div class="border border-nike-gray-150 bg-nike-snow p-6">
                 <div class="mx-auto h-40 w-40 overflow-hidden rounded-full bg-nike-black text-white">
                     @if($avatarUrl)
-                        <img id="avatar-preview" src="{{ $avatarUrl }}" alt="{{ $user->name }}" class="h-full w-full object-cover">
+                        <img id="avatar-preview" src="{{ $avatarUrl }}" onerror="this.onerror=null; this.src='{{ asset('images/hero.png') }}'" alt="{{ $user->name }}" class="h-full w-full object-cover">
                     @else
                         <span id="avatar-fallback" class="flex h-full w-full items-center justify-center text-4xl font-black uppercase">{{ $user->initials }}</span>
-                        <img id="avatar-preview" src="" alt="{{ $user->name }}" class="hidden h-full w-full object-cover">
+                        <img id="avatar-preview" src="{{ asset('images/hero.png') }}" alt="{{ $user->name }}" class="hidden h-full w-full object-cover">
                     @endif
                 </div>
 

@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Services\CartService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Session;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class CartSyncTest extends TestCase
@@ -21,7 +22,7 @@ class CartSyncTest extends TestCase
         $this->cartService = app(CartService::class);
     }
 
-    /** @test */
+    #[Test]
     public function guest_cart_merges_with_user_cart_upon_login()
     {
         $variant = ProductVariant::factory()->create(['stock' => 10]);
@@ -45,7 +46,7 @@ class CartSyncTest extends TestCase
         $this->assertEquals(2, $this->cartService->getItems()->get($variant->id)['qty']);
     }
 
-    /** @test */
+    #[Test]
     public function empty_guest_cart_does_not_overwrite_existing_cart_logic()
     {
         // In our current implementation, the cart is session-based.

@@ -44,7 +44,7 @@
             </a>
 
             {{-- Center Links: PILL SHAPE NAVIGATION --}}
-            <div class="hidden md:flex items-center space-x-1">
+            <div class="hidden xl:flex items-center space-x-1">
                 @php
                     $currentCategory = request()->get('category');
                     $isHome = request()->routeIs('home') || request()->is('/');

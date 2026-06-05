@@ -20,7 +20,7 @@
             <div class="flex items-center gap-5">
                 <div class="h-20 w-20 shrink-0 overflow-hidden rounded-full bg-nike-black text-white">
                     @if($avatarUrl)
-                        <img src="{{ $avatarUrl }}" alt="{{ $user->name }}" class="h-full w-full object-cover">
+                        <img src="{{ $avatarUrl }}" onerror="this.onerror=null; this.src='{{ asset('images/hero.png') }}'" alt="{{ $user->name }}" class="h-full w-full object-cover">
                     @else
                         <span class="flex h-full w-full items-center justify-center text-xl font-black uppercase">{{ $user->initials }}</span>
                     @endif

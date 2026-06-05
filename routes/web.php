@@ -45,6 +45,9 @@ Route::get('/users/{user}', [UserPublicProfileController::class, 'show'])->name(
 Route::get('/support', [SupportController::class, 'create'])->name('support.create');
 Route::post('/support', [SupportController::class, 'store'])->name('support.store');
 
+// Public Marketplace Feed
+Route::get('/marketplace', [MarketplaceController::class, 'index'])->name('marketplace.index');
+
 Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
 Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
 Route::get('/cart/fragment', [CartController::class, 'fragment'])->name('cart.fragment');
@@ -72,12 +75,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/wishlist/toggle', [WishlistController::class, 'toggle'])->name('wishlist.toggle');
 
     // Marketplace (C2C)
-    Route::get('/marketplace', [MarketplaceController::class, 'index'])->name('marketplace.index');
     Route::get('/marketplace/create', [MarketplaceController::class, 'create'])->name('marketplace.create')->middleware('auth');
     Route::post('/marketplace', [MarketplaceController::class, 'store'])->name('marketplace.store')->middleware('auth');
     Route::get('/marketplace/search-products', [MarketplaceController::class, 'search'])->name('marketplace.search');
     Route::get('/marketplace/products/{product}/variants', [MarketplaceController::class, 'variants'])->name('marketplace.products.variants');
-    Route::get('/marketplace/{listing}', [MarketplaceController::class, 'show'])->name('marketplace.show');
 
     // Admin Dashboard & Management
     Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
@@ -126,3 +127,5 @@ Route::middleware('auth')->group(function () {
         Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
     });
 });
+
+Route::get('/marketplace/{listing}', [MarketplaceController::class, 'show'])->name('marketplace.show');

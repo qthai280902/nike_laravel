@@ -34,7 +34,7 @@
 <body class="bg-[#09090b] text-[#fafafa] antialiased overflow-x-hidden min-h-screen flex">
 
     {{-- Sidebar --}}
-    <aside class="type-sidebar w-64 flex-shrink-0 flex flex-col fixed inset-y-0 z-50">
+    <aside class="type-sidebar fixed inset-y-0 z-50 hidden w-64 flex-shrink-0 flex-col lg:flex">
         <div class="p-6 flex items-center space-x-3">
             <div class="w-8 h-8 bg-white rounded flex items-center justify-center">
                 <svg class="w-5 h-5 text-black" fill="none" viewBox="0 0 24 24" aria-hidden="true">
@@ -93,9 +93,38 @@
     </aside>
 
     {{-- Main Content --}}
-    <main class="flex-grow ml-64 p-8">
+    <main class="min-w-0 flex-grow p-4 sm:p-6 lg:ml-64 lg:p-8">
+        <div class="mb-6 border-b border-zinc-800 pb-4 lg:hidden">
+            <div class="flex items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="flex h-8 w-8 items-center justify-center rounded bg-white">
+                        <svg class="h-5 w-5 text-black" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M5 17V7l7 10V7" stroke="currentColor" stroke-width="2.4" stroke-linecap="square" stroke-linejoin="miter"/>
+                            <path d="M15 17V7h4v10" stroke="currentColor" stroke-width="2.4" stroke-linecap="square" stroke-linejoin="miter"/>
+                        </svg>
+                    </div>
+                    <span class="text-sm font-bold tracking-tight">Nike Hybrid Admin</span>
+                </div>
+                <a href="/" class="shrink-0 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-white">
+                    Cửa hàng
+                </a>
+            </div>
+
+            <nav class="mt-4 flex gap-2 overflow-x-auto pb-1 text-[10px] font-bold uppercase tracking-widest">
+                <a href="{{ route('admin.dashboard') }}" class="shrink-0 rounded-lg border px-3 py-2 {{ request()->routeIs('admin.dashboard') ? 'border-white bg-white text-black' : 'border-zinc-800 text-zinc-400' }}">Dashboard</a>
+                <a href="{{ route('admin.orders.index') }}" class="shrink-0 rounded-lg border px-3 py-2 {{ request()->routeIs('admin.orders.*') ? 'border-white bg-white text-black' : 'border-zinc-800 text-zinc-400' }}">Đơn hàng</a>
+                <a href="{{ route('admin.storefront.index') }}" class="shrink-0 rounded-lg border px-3 py-2 {{ request()->routeIs('admin.storefront.*') || request()->routeIs('admin.products.*') ? 'border-white bg-white text-black' : 'border-zinc-800 text-zinc-400' }}">Sản phẩm</a>
+                <a href="{{ route('admin.marketplace.index') }}" class="shrink-0 rounded-lg border px-3 py-2 {{ request()->routeIs('admin.marketplace.*') ? 'border-white bg-white text-black' : 'border-zinc-800 text-zinc-400' }}">C2C</a>
+                <a href="{{ route('admin.reviews.index') }}" class="shrink-0 rounded-lg border px-3 py-2 {{ request()->routeIs('admin.reviews.*') ? 'border-white bg-white text-black' : 'border-zinc-800 text-zinc-400' }}">Đánh giá</a>
+                <a href="{{ route('admin.members.index') }}" class="shrink-0 rounded-lg border px-3 py-2 {{ request()->routeIs('admin.members.*') ? 'border-white bg-white text-black' : 'border-zinc-800 text-zinc-400' }}">Thành viên</a>
+                <a href="{{ route('admin.reports.index') }}" class="shrink-0 rounded-lg border px-3 py-2 {{ request()->routeIs('admin.reports.*') ? 'border-white bg-white text-black' : 'border-zinc-800 text-zinc-400' }}">Báo cáo</a>
+                <a href="{{ route('admin.support.index') }}" class="shrink-0 rounded-lg border px-3 py-2 {{ request()->routeIs('admin.support.*') ? 'border-white bg-white text-black' : 'border-zinc-800 text-zinc-400' }}">Hỗ trợ</a>
+                <a href="{{ route('admin.landing-articles.index') }}" class="shrink-0 rounded-lg border px-3 py-2 {{ request()->routeIs('admin.landing-articles.*') ? 'border-white bg-white text-black' : 'border-zinc-800 text-zinc-400' }}">Bài viết</a>
+            </nav>
+        </div>
+
         {{-- Topbar --}}
-        <header class="flex justify-between items-center mb-12">
+        <header class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between lg:mb-12">
             <div>
                 <h2 class="text-2xl font-bold tracking-tight">@yield('page_title', 'Dashboard')</h2>
                 <p class="text-sm text-zinc-500">Xin chào, {{ auth()->user()->name }}</p>

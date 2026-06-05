@@ -44,11 +44,11 @@
                             <label class="flex items-center">
                                 <input type="checkbox" name="remember" class="mr-2 accent-nike-black"> Duy trì đăng nhập
                             </label>
-                            <a href="#" class="underline">Quên mật khẩu?</a>
+                            <span>Quên mật khẩu?</span>
                         </div>
 
                         <p class="text-[10px] text-nike-gray-500 leading-relaxed py-4">
-                            Bằng cách tiếp tục, tôi đồng ý với <a href="#" class="underline">Chính sách Bảo mật</a> và <a href="#" class="underline">Điều khoản Sử dụng</a> của Nike.
+                            Bằng cách tiếp tục, tôi đồng ý với Chính sách Bảo mật và Điều khoản Sử dụng của Nike.
                         </p>
 
                         <button type="submit" class="w-full bg-nike-black text-white py-4 rounded-full font-bold uppercase text-xs tracking-widest hover:bg-nike-gray-800 transition-colors">

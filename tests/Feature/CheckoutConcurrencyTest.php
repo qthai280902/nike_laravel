@@ -9,6 +9,7 @@ use App\Services\CheckoutService;
 use Exception;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class CheckoutConcurrencyTest extends TestCase
@@ -26,7 +27,7 @@ class CheckoutConcurrencyTest extends TestCase
         $this->cartService = app(CartService::class);
     }
 
-    /** @test */
+    #[Test]
     public function lock_for_update_prevents_negative_stock_simulation()
     {
         // 1. Setup variant with only 1 item
@@ -71,7 +72,7 @@ class CheckoutConcurrencyTest extends TestCase
         $this->checkoutService->process($shippingData);
     }
 
-    /** @test */
+    #[Test]
     public function checkout_snapshots_exact_price_into_order_items()
     {
         $variant = ProductVariant::factory()->create([
