@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class User extends Authenticatable
@@ -28,6 +29,7 @@ class User extends Authenticatable
         'display_id',
         'role',
         'avatar_url',
+        'avatar_path',
     ];
 
     /**
@@ -114,6 +116,10 @@ class User extends Authenticatable
      */
     public function getAvatarDisplayUrlAttribute(): ?string
     {
+        if ($this->avatar_path) {
+            return Storage::disk('public')->url($this->avatar_path);
+        }
+
         if (! $this->avatar_url) {
             return null;
         }

@@ -37,6 +37,12 @@
             </div>
         </div>
 
+        @if(session('success'))
+            <div class="mb-8 border border-emerald-200 bg-emerald-50 p-4 text-sm font-bold text-emerald-900">
+                {{ session('success') }}
+            </div>
+        @endif
+
         <div class="mb-10 flex gap-8 overflow-x-auto border-b border-nike-gray-200">
             <button onclick="switchTab('details')" id="tab-btn-details" class="tab-btn border-b-2 border-nike-black pb-4 text-sm font-bold uppercase tracking-widest transition-all">
                 Thông tin
@@ -49,6 +55,9 @@
             </button>
             <button onclick="switchTab('support')" id="tab-btn-support" class="tab-btn border-b-2 border-transparent pb-4 text-sm font-bold uppercase tracking-widest text-nike-gray-400 transition-all hover:text-nike-black">
                 Hỗ trợ
+            </button>
+            <button onclick="switchTab('reviews')" id="tab-btn-reviews" class="tab-btn border-b-2 border-transparent pb-4 text-sm font-bold uppercase tracking-widest text-nike-gray-400 transition-all hover:text-nike-black">
+                Đánh giá của tôi
             </button>
             <button onclick="switchTab('marketplace')" id="tab-btn-marketplace" class="tab-btn border-b-2 border-transparent pb-4 text-sm font-bold uppercase tracking-widest text-nike-gray-400 transition-all hover:text-nike-black">
                 C2C
@@ -85,9 +94,9 @@
                             Quản lý hệ thống
                         </a>
                     @endif
-                    <button type="button" class="inline-flex items-center justify-center rounded-full border border-nike-gray-300 bg-white px-8 py-4 text-xs font-bold uppercase tracking-widest text-nike-black transition hover:bg-nike-gray-100">
+                    <a href="{{ route('profile.edit') }}" class="inline-flex items-center justify-center rounded-full border border-nike-gray-300 bg-white px-8 py-4 text-xs font-bold uppercase tracking-widest text-nike-black transition hover:bg-nike-gray-100">
                         Chỉnh sửa hồ sơ
-                    </button>
+                    </a>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="inline-flex w-full items-center justify-center rounded-full bg-nike-red px-8 py-4 text-xs font-bold uppercase tracking-widest text-white transition hover:bg-red-800 md:w-auto">
@@ -198,6 +207,47 @@
                 @empty
                     <div class="border border-dashed border-nike-gray-200 bg-white p-8 text-center">
                         <p class="text-xs font-black uppercase tracking-widest text-nike-gray-400">Bạn chưa có yêu cầu hỗ trợ nào.</p>
+                    </div>
+                @endforelse
+            </div>
+        </div>
+
+        <div id="tab-content-reviews" class="tab-content hidden">
+            <div class="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+                <div>
+                    <h2 class="text-3xl font-bold uppercase">Đánh giá của tôi</h2>
+                    <p class="mt-2 text-sm font-medium text-nike-gray-500">Theo dõi trạng thái kiểm duyệt của các review đã gửi.</p>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                @forelse($productReviews as $review)
+                    <article class="border border-nike-gray-150 bg-white p-5">
+                        <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                            <div class="min-w-0">
+                                <div class="flex flex-wrap items-center gap-3 text-[10px] font-black uppercase tracking-widest">
+                                    <span class="px-3 py-1.5 {{ $review->status_badge_class }}">{{ $review->status_label }}</span>
+                                    <span class="border border-nike-gray-150 px-3 py-1.5 text-nike-gray-500">{{ $review->rating }}/5</span>
+                                    <span class="border border-nike-gray-150 px-3 py-1.5 text-nike-gray-500">Gửi {{ $review->created_at?->format('d/m/Y') }}</span>
+                                </div>
+                                <a href="{{ $review->product ? route('catalog.show', $review->product->slug) : '#' }}" class="mt-4 inline-block text-sm font-black uppercase text-nike-black underline-offset-4 hover:underline">
+                                    {{ $review->product?->name ?? 'Sản phẩm đã xóa' }}
+                                </a>
+                                <p class="mt-2 text-sm font-black uppercase text-nike-black">{{ $review->title ?: 'Đánh giá sản phẩm' }}</p>
+                                <p class="mt-2 text-sm font-medium leading-6 text-nike-gray-600">{{ $review->comment }}</p>
+                            </div>
+                            <div class="shrink-0 text-left text-[10px] font-bold uppercase tracking-widest text-nike-gray-400 md:text-right">
+                                <p>Duyệt lúc: <span class="text-nike-black">{{ $review->moderated_at?->format('d/m/Y') ?? 'Chưa có' }}</span></p>
+                                <p class="mt-1">Admin: <span class="text-nike-black">{{ $review->moderator?->name ?? 'Chưa có' }}</span></p>
+                            </div>
+                        </div>
+                        @if($review->rejection_reason)
+                            <p class="mt-4 border border-red-100 bg-red-50 p-4 text-sm font-medium leading-6 text-red-800">{{ $review->rejection_reason }}</p>
+                        @endif
+                    </article>
+                @empty
+                    <div class="border border-dashed border-nike-gray-200 bg-white p-8 text-center">
+                        <p class="text-xs font-black uppercase tracking-widest text-nike-gray-400">Bạn chưa gửi đánh giá sản phẩm nào.</p>
                     </div>
                 @endforelse
             </div>

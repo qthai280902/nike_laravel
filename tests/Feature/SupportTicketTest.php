@@ -48,8 +48,8 @@ class SupportTicketTest extends TestCase
         ]);
 
         $ticketData = [
-            'name' => 'User Dang Nhap Override', // prefilled but can be customized
-            'email' => 'user@example.com',
+            'name' => 'User Dang Nhap Override',
+            'email' => 'attacker@example.com',
             'subject' => 'Tư vấn chọn size giày Air Max',
             'message' => 'Chân mình dài 26cm thì nên chọn size 41 hay 42 vậy shop?',
         ];
@@ -61,11 +61,27 @@ class SupportTicketTest extends TestCase
 
         $this->assertDatabaseHas('support_tickets', [
             'user_id' => $user->id,
-            'name' => 'User Dang Nhap Override',
+            'name' => 'User Dang Nhap',
             'email' => 'user@example.com',
             'subject' => 'Tư vấn chọn size giày Air Max',
             'status' => 'open',
         ]);
+    }
+
+    #[Test]
+    public function logged_in_support_form_locks_account_identity_fields(): void
+    {
+        $user = User::factory()->create([
+            'name' => 'Locked Identity',
+            'email' => 'locked@example.com',
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('support.create'))
+            ->assertOk()
+            ->assertSee('value="Locked Identity"', false)
+            ->assertSee('value="locked@example.com"', false)
+            ->assertSee('readonly', false);
     }
 
     #[Test]

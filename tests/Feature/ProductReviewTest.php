@@ -144,6 +144,14 @@ class ProductReviewTest extends TestCase
             'name' => 'Nike Public Profile Pair',
             'slug' => 'nike-public-profile-pair',
         ]);
+        $hiddenProduct = Product::factory()->create([
+            'name' => 'Nike Hidden Public Profile Pair',
+            'slug' => 'nike-hidden-public-profile-pair',
+        ]);
+        $rejectedProduct = Product::factory()->create([
+            'name' => 'Nike Rejected Public Profile Pair',
+            'slug' => 'nike-rejected-public-profile-pair',
+        ]);
         ProductReview::factory()->create([
             'product_id' => $product->id,
             'user_id' => $user->id,
@@ -155,6 +163,18 @@ class ProductReviewTest extends TestCase
             'product_id' => $product->id,
             'user_id' => User::factory(),
             'comment' => 'Review chưa duyệt không được hiện.',
+        ]);
+        ProductReview::factory()->hidden()->create([
+            'product_id' => $hiddenProduct->id,
+            'user_id' => $user->id,
+            'author_name' => $user->name,
+            'comment' => 'Review hidden không được hiện.',
+        ]);
+        ProductReview::factory()->rejected()->create([
+            'product_id' => $rejectedProduct->id,
+            'user_id' => $user->id,
+            'author_name' => $user->name,
+            'comment' => 'Review rejected không được hiện.',
         ]);
         MarketplaceListing::factory()->create([
             'user_id' => $user->id,
@@ -172,6 +192,8 @@ class ProductReviewTest extends TestCase
             ->assertSee('Nike Public Profile Pair')
             ->assertSee('Review công khai đã duyệt.')
             ->assertDontSee('Review chưa duyệt không được hiện.')
+            ->assertDontSee('Review hidden không được hiện.')
+            ->assertDontSee('Review rejected không được hiện.')
             ->assertDontSee('private-user@example.com');
     }
 }

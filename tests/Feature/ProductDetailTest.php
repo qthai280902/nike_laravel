@@ -39,6 +39,16 @@ class ProductDetailTest extends TestCase
             'title' => 'Review chưa duyệt',
             'comment' => 'Không được hiện ngoài storefront.',
         ]);
+        ProductReview::factory()->hidden()->create([
+            'product_id' => $product->id,
+            'title' => 'Review đang ẩn',
+            'comment' => 'Hidden không được hiện ngoài storefront.',
+        ]);
+        ProductReview::factory()->rejected()->create([
+            'product_id' => $product->id,
+            'title' => 'Review bị từ chối',
+            'comment' => 'Rejected không được hiện ngoài storefront.',
+        ]);
 
         $response = $this->get(route('catalog.show', $product->slug));
 
@@ -53,7 +63,11 @@ class ProductDetailTest extends TestCase
             ->assertSee('Mang cả ngày vẫn thoải mái.')
             ->assertSee('5.0/5')
             ->assertDontSee('Review chưa duyệt')
-            ->assertDontSee('Không được hiện ngoài storefront.');
+            ->assertDontSee('Không được hiện ngoài storefront.')
+            ->assertDontSee('Review đang ẩn')
+            ->assertDontSee('Hidden không được hiện ngoài storefront.')
+            ->assertDontSee('Review bị từ chối')
+            ->assertDontSee('Rejected không được hiện ngoài storefront.');
     }
 
     #[Test]

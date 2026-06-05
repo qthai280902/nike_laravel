@@ -22,12 +22,17 @@ class SupportController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'subject' => 'required|string|max:255',
-            'message' => 'required|string',
-        ], [
+        $rules = [
+            'subject' => ['required', 'string', 'max:255'],
+            'message' => ['required', 'string'],
+        ];
+
+        if (! $request->user()) {
+            $rules['name'] = ['required', 'string', 'max:255'];
+            $rules['email'] = ['required', 'email', 'max:255'];
+        }
+
+        $validated = $request->validate($rules, [
             'name.required' => 'Vui lòng nhập họ và tên.',
             'name.max' => 'Họ và tên không được vượt quá 255 ký tự.',
             'email.required' => 'Vui lòng nhập địa chỉ email.',
@@ -38,13 +43,18 @@ class SupportController extends Controller
             'message.required' => 'Vui lòng nhập nội dung yêu cầu hỗ trợ.',
         ]);
 
-        $ticketData = array_merge($validated, [
-            'user_id' => auth()->id(),
+        if ($request->user()) {
+            $validated['name'] = $request->user()->name;
+            $validated['email'] = $request->user()->email;
+        }
+
+        SupportTicket::create(array_merge($validated, [
+            'user_id' => $request->user()?->id,
             'status' => 'open',
-        ]);
+        ]));
 
-        SupportTicket::create($ticketData);
-
-        return redirect()->route('support.create')->with('success', 'Yêu cầu hỗ trợ của bạn đã được gửi thành công. Chúng tôi sẽ phản hồi sớm nhất có thể.');
+        return redirect()
+            ->route('support.create')
+            ->with('success', 'Yêu cầu hỗ trợ của bạn đã được gửi thành công. Chúng tôi sẽ phản hồi sớm nhất có thể.');
     }
 }

@@ -12,6 +12,7 @@
         $reviewStatusLabels = [
             'pending' => 'Đang chờ duyệt',
             'approved' => 'Đã duyệt',
+            'hidden' => 'Đang ẩn',
             'rejected' => 'Đã từ chối',
         ];
     @endphp

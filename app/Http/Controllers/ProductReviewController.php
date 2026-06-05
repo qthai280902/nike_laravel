@@ -35,7 +35,7 @@ class ProductReviewController extends Controller
             'rating' => $validated['rating'],
             'title' => $validated['title'] ?? null,
             'comment' => $validated['comment'],
-            'status' => 'pending',
+            'status' => ProductReview::STATUS_PENDING,
         ]);
 
         return back()->with('success', 'Đánh giá của bạn đã được gửi và đang chờ duyệt.');

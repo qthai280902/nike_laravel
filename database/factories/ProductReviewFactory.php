@@ -26,7 +26,10 @@ class ProductReviewFactory extends Factory
             'rating' => fake()->numberBetween(3, 5),
             'title' => fake()->sentence(4),
             'comment' => fake()->paragraph(),
-            'status' => 'approved',
+            'status' => ProductReview::STATUS_APPROVED,
+            'rejection_reason' => null,
+            'moderated_at' => null,
+            'moderated_by_user_id' => null,
         ];
     }
 
@@ -36,7 +39,17 @@ class ProductReviewFactory extends Factory
     public function pending(): static
     {
         return $this->state(fn (array $attributes) => [
-            'status' => 'pending',
+            'status' => ProductReview::STATUS_PENDING,
+        ]);
+    }
+
+    /**
+     * Mark the review as hidden from public storefronts.
+     */
+    public function hidden(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => ProductReview::STATUS_HIDDEN,
         ]);
     }
 
@@ -46,7 +59,8 @@ class ProductReviewFactory extends Factory
     public function rejected(): static
     {
         return $this->state(fn (array $attributes) => [
-            'status' => 'rejected',
+            'status' => ProductReview::STATUS_REJECTED,
+            'rejection_reason' => 'Nội dung đánh giá không phù hợp với tiêu chuẩn cộng đồng.',
         ]);
     }
 }

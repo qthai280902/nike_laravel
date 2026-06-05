@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\LandingArticleController;
 use App\Http\Controllers\Admin\MemberController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\ProductReviewController as AdminProductReviewController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\StorefrontController;
 use App\Http\Controllers\Admin\SupportTicketController;
@@ -59,6 +60,8 @@ Route::controller(AuthController::class)->group(function () {
 // Profile & Authenticated Routes
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // Checkout
@@ -79,6 +82,12 @@ Route::middleware('auth')->group(function () {
     // Admin Dashboard & Management
     Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
+        Route::get('/reviews', [AdminProductReviewController::class, 'index'])->name('reviews.index');
+        Route::get('/reviews/{review}', [AdminProductReviewController::class, 'show'])->name('reviews.show');
+        Route::patch('/reviews/{review}/approve', [AdminProductReviewController::class, 'approve'])->name('reviews.approve');
+        Route::patch('/reviews/{review}/hide', [AdminProductReviewController::class, 'hide'])->name('reviews.hide');
+        Route::patch('/reviews/{review}/reject', [AdminProductReviewController::class, 'reject'])->name('reviews.reject');
+        Route::patch('/reviews/{review}/keep-pending', [AdminProductReviewController::class, 'keepPending'])->name('reviews.keep-pending');
         Route::get('/marketplace', [AdminController::class, 'marketplaceIndex'])->name('marketplace.index');
         Route::get('/marketplace/{listing}', [AdminController::class, 'marketplaceShow'])->name('marketplace.show');
         Route::patch('/marketplace/{listing}/{status}', [AdminController::class, 'updateListingStatus'])->name('marketplace.update');

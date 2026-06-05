@@ -8,6 +8,7 @@ use App\Models\LandingArticle;
 use App\Models\MarketplaceListing;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\ProductReview;
 use App\Models\ProductVariant;
 use App\Models\SupportTicket;
 use App\Models\User;
@@ -71,6 +72,7 @@ class AdminController extends Controller
             ->get();
 
         $openTicketsCount = SupportTicket::whereIn('status', ['open', 'in_progress'])->count();
+        $pendingProductReviewsCount = ProductReview::pending()->count();
         $publishedArticlesCount = LandingArticle::where('is_published', true)->count();
 
         return view('admin.dashboard', compact(
@@ -85,6 +87,7 @@ class AdminController extends Controller
             'pendingListings',
             'lowStockVariants',
             'openTicketsCount',
+            'pendingProductReviewsCount',
             'publishedArticlesCount'
         ));
     }

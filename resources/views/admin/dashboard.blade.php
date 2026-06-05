@@ -10,6 +10,7 @@
         ['label' => 'Sản Phẩm Quản Lý', 'value' => $productsCount, 'meta' => 'Mẫu', 'tone' => 'text-zinc-300 bg-zinc-500/10'],
         ['label' => 'Thành Viên', 'value' => $newMembersCount, 'meta' => 'Người dùng', 'tone' => 'text-green-400 bg-green-500/10'],
         ['label' => 'Hỗ Trợ Đang Mở', 'value' => $openTicketsCount, 'meta' => 'Ticket', 'tone' => 'text-yellow-400 bg-yellow-500/10'],
+        ['label' => 'Đánh Giá Chờ Duyệt', 'value' => $pendingProductReviewsCount, 'meta' => 'Review', 'tone' => 'text-blue-400 bg-blue-500/10'],
         ['label' => 'Bài Viết Đã Đăng', 'value' => $publishedArticlesCount, 'meta' => 'Bài viết', 'tone' => 'text-green-400 bg-green-500/10'],
     ];
 
@@ -25,6 +26,7 @@
         ['label' => 'Đơn hàng', 'route' => route('admin.orders.index')],
         ['label' => 'Trưng bày', 'route' => route('admin.storefront.index')],
         ['label' => 'Duyệt C2C', 'route' => route('admin.marketplace.index')],
+        ['label' => 'Duyệt review', 'route' => route('admin.reviews.index')],
         ['label' => 'Thành viên', 'route' => route('admin.members.index')],
         ['label' => 'Báo cáo', 'route' => route('admin.reports.index')],
         ['label' => 'Hỗ trợ', 'route' => route('admin.support.index')],

@@ -62,6 +62,10 @@
                 <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
                 Duyệt Chợ C2C
             </a>
+            <a href="{{ route('admin.reviews.index') }}" class="type-nav-link {{ request()->routeIs('admin.reviews.*') ? 'active' : '' }} flex items-center px-4 py-2.5 text-sm font-medium text-zinc-400 rounded-lg transition-all">
+                <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.955a1 1 0 00.95.69h4.157c.969 0 1.371 1.24.588 1.81l-3.363 2.443a1 1 0 00-.364 1.118l1.285 3.955c.3.921-.755 1.688-1.539 1.118l-3.362-2.443a1 1 0 00-1.176 0l-3.362 2.443c-.784.57-1.838-.197-1.539-1.118l1.285-3.955a1 1 0 00-.364-1.118L4.07 9.382c-.783-.57-.38-1.81.588-1.81h4.157a1 1 0 00.95-.69l1.286-3.955z"></path></svg>
+                Đánh giá sản phẩm
+            </a>
             <a href="{{ route('admin.members.index') }}" class="type-nav-link {{ request()->routeIs('admin.members.*') ? 'active' : '' }} flex items-center px-4 py-2.5 text-sm font-medium text-zinc-400 rounded-lg transition-all">
                 <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                 Thành viên
@@ -132,6 +136,15 @@
                                         <span class="text-zinc-300">Yêu cầu hỗ trợ đang mở</span>
                                         <span class="px-2 py-0.5 rounded bg-orange-500/15 text-orange-500 font-bold font-mono">
                                             {{ $adminNotifications['open_support_tickets_count'] }}
+                                        </span>
+                                    </a>
+                                @endif
+
+                                @if($adminNotifications['pending_product_reviews_count'] > 0)
+                                    <a href="{{ $adminNotifications['links']['pending_product_reviews'] }}" class="flex items-center justify-between px-4 py-3 hover:bg-zinc-900/55 transition-colors">
+                                        <span class="text-zinc-300">Đánh giá sản phẩm chờ duyệt</span>
+                                        <span class="px-2 py-0.5 rounded bg-purple-500/15 text-purple-400 font-bold font-mono">
+                                            {{ $adminNotifications['pending_product_reviews_count'] }}
                                         </span>
                                     </a>
                                 @endif

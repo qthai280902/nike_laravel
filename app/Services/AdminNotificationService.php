@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\MarketplaceListing;
 use App\Models\Order;
+use App\Models\ProductReview;
 use App\Models\ProductVariant;
 use App\Models\SupportTicket;
 
@@ -15,6 +16,7 @@ class AdminNotificationService
      * @return array{
      *     pending_orders_count: int,
      *     open_support_tickets_count: int,
+     *     pending_product_reviews_count: int,
      *     pending_listings_count: int,
      *     low_stock_count: int,
      *     total_count: int,
@@ -25,20 +27,23 @@ class AdminNotificationService
     {
         $pendingOrders = Order::where('status', 'pending')->count();
         $openSupport = SupportTicket::whereIn('status', ['open', 'in_progress'])->count();
+        $pendingProductReviews = ProductReview::pending()->count();
         $pendingListings = MarketplaceListing::pending()->count();
         $lowStock = ProductVariant::where('stock', '<=', 5)->count();
 
-        $totalCount = $pendingOrders + $openSupport + $pendingListings + $lowStock;
+        $totalCount = $pendingOrders + $openSupport + $pendingProductReviews + $pendingListings + $lowStock;
 
         return [
             'pending_orders_count' => $pendingOrders,
             'open_support_tickets_count' => $openSupport,
+            'pending_product_reviews_count' => $pendingProductReviews,
             'pending_listings_count' => $pendingListings,
             'low_stock_count' => $lowStock,
             'total_count' => $totalCount,
             'links' => [
                 'pending_orders' => route('admin.orders.index', ['status' => 'pending']),
                 'open_support' => route('admin.support.index'),
+                'pending_product_reviews' => route('admin.reviews.index', ['status' => ProductReview::STATUS_PENDING]),
                 'pending_listings' => route('admin.marketplace.index'),
                 'low_stock' => route('admin.dashboard').'#low-stock-section',
             ],

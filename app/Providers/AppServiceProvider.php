@@ -28,6 +28,7 @@ class AppServiceProvider extends ServiceProvider
                 $view->with('adminNotifications', [
                     'pending_orders_count' => 0,
                     'open_support_tickets_count' => 0,
+                    'pending_product_reviews_count' => 0,
                     'pending_listings_count' => 0,
                     'low_stock_count' => 0,
                     'total_count' => 0,

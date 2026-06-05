@@ -6,6 +6,7 @@ use App\Enums\MarketplaceListingStatus;
 use App\Models\MarketplaceListing;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\ProductReview;
 use App\Models\ProductVariant;
 use App\Models\SupportTicket;
 use App\Models\User;
@@ -49,28 +50,36 @@ class AdminNotificationTest extends TestCase
             'status' => MarketplaceListingStatus::Pending,
         ]);
 
-        // 4. Create a low stock variant (stock = 3 <= 5)
+        // 4. Create a pending product review
+        ProductReview::factory()->pending()->create([
+            'product_id' => $product->id,
+            'title' => 'Review waiting for admin',
+        ]);
+
+        // 5. Create a low stock variant (stock = 3 <= 5)
         ProductVariant::factory()->create(['product_id' => $product->id, 'stock' => 3]);
 
-        // Total count = 1 (pending order) + 2 (open/in_progress tickets) + 1 (pending listing) + 1 (low stock variant) = 5
+        // Total count = 1 (pending order) + 2 (open/in_progress tickets) + 1 (pending review) + 1 (pending listing) + 1 (low stock variant) = 6
         $response = $this->actingAs($admin)->get(route('admin.dashboard'));
 
         $response->assertStatus(200);
 
-        // Check if badge is displayed with count 5
+        // Check if badge is displayed with count 6
         $response->assertSee('absolute top-0 right-0 block h-4 w-4 rounded-full bg-red-500');
-        $response->assertSee('5');
+        $response->assertSee('6');
 
         // Check Vietnamese strings and links inside dropdown
         $response->assertSee('Thông báo quản trị');
         $response->assertSee('Đơn hàng chờ xử lý');
         $response->assertSee('Yêu cầu hỗ trợ đang mở');
+        $response->assertSee('Đánh giá sản phẩm chờ duyệt');
         $response->assertSee('Tin C2C chờ duyệt');
         $response->assertSee('Sản phẩm sắp hết hàng');
 
         // Verify correct route links
         $response->assertSee(route('admin.orders.index', ['status' => 'pending']));
         $response->assertSee(route('admin.support.index'));
+        $response->assertSee(route('admin.reviews.index', ['status' => ProductReview::STATUS_PENDING]));
         $response->assertSee(route('admin.marketplace.index'));
         $response->assertSee(route('admin.dashboard').'#low-stock-section');
     }

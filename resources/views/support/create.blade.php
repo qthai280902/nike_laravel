@@ -1,48 +1,31 @@
 @extends('layouts.app')
 
-@section('title', 'Trung tâm Hỗ trợ | Nike Hybrid')
+@section('title', 'Trung tâm hỗ trợ | Nike Hybrid')
 
 @section('content')
-<div class="py-12 bg-nike-gray-100 min-h-[80vh]">
-    <div class="max-w-2xl mx-auto px-4">
-        <!-- Breadcrumb / Header -->
+@php($authUser = auth()->user())
+
+<div class="min-h-[80vh] bg-nike-gray-100 py-12">
+    <div class="mx-auto max-w-2xl px-4">
         <div class="mb-8">
-            <h1 class="text-3xl font-extrabold uppercase tracking-tight text-nike-black font-nike-display">
-                Trung tâm Hỗ trợ
+            <h1 class="font-nike-display text-3xl font-extrabold uppercase tracking-tight text-nike-black">
+                Trung tâm hỗ trợ
             </h1>
-            <p class="text-sm text-nike-gray-500 mt-2 font-nike-body">
-                Gửi yêu cầu hỗ trợ cho chúng tôi. Đội ngũ Nike Hybrid sẽ phản hồi bạn trong thời gian sớm nhất.
+            <p class="font-nike-body mt-2 text-sm text-nike-gray-500">
+                Gửi yêu cầu hỗ trợ cho đội ngũ Nike Hybrid.
             </p>
         </div>
 
         @if (session('success'))
-            <div class="bg-emerald-50 border-l-4 border-emerald-500 text-emerald-950 p-4 mb-6 rounded shadow-sm font-nike-body">
-                <div class="flex">
-                    <div class="flex-shrink-0">
-                        <svg class="h-5 w-5 text-emerald-500" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                        </svg>
-                    </div>
-                    <div class="ml-3">
-                        <p class="text-sm font-semibold">{{ session('success') }}</p>
-                    </div>
-                </div>
+            <div class="font-nike-body mb-6 border-l-4 border-emerald-500 bg-emerald-50 p-4 text-emerald-950 shadow-sm">
+                <p class="text-sm font-semibold">{{ session('success') }}</p>
             </div>
         @endif
 
         @if ($errors->any())
-            <div class="bg-rose-50 border-l-4 border-rose-500 text-rose-950 p-4 mb-6 rounded shadow-sm font-nike-body">
-                <div class="flex mb-2">
-                    <div class="flex-shrink-0">
-                        <svg class="h-5 w-5 text-rose-500" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-                        </svg>
-                    </div>
-                    <div class="ml-3">
-                        <p class="text-sm font-semibold">Đã xảy ra lỗi nhập liệu:</p>
-                    </div>
-                </div>
-                <ul class="list-disc list-inside text-xs space-y-1 ml-8">
+            <div class="font-nike-body mb-6 border-l-4 border-rose-500 bg-rose-50 p-4 text-rose-950 shadow-sm">
+                <p class="text-sm font-semibold">Đã xảy ra lỗi nhập liệu:</p>
+                <ul class="ml-5 mt-2 list-disc space-y-1 text-xs">
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
@@ -50,70 +33,77 @@
             </div>
         @endif
 
-        <!-- Support Form Card -->
-        <div class="bg-white rounded-2xl shadow-sm border border-nike-gray-200 p-8">
-            <form action="{{ route('support.store') }}" method="POST" class="space-y-6 font-nike-body">
+        <div class="border border-nike-gray-200 bg-white p-8 shadow-sm">
+            <form action="{{ route('support.store') }}" method="POST" class="font-nike-body space-y-6">
                 @csrf
 
-                <!-- Name & Email fields in a grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <div>
-                        <label for="name" class="block text-xs font-bold uppercase tracking-wider text-nike-black mb-2">
+                        <label for="name" class="mb-2 block text-xs font-bold uppercase tracking-wider text-nike-black">
                             Họ và tên <span class="text-rose-500">*</span>
                         </label>
-                        <input type="text" name="name" id="name" 
-                            class="w-full px-4 py-3 rounded-lg border border-nike-gray-300 focus:outline-none focus:border-nike-black focus:ring-1 focus:ring-nike-black text-sm transition-colors @error('name') border-rose-500 @enderror"
+                        <input type="text" name="name" id="name"
+                            class="w-full border border-nike-gray-300 px-4 py-3 text-sm transition-colors focus:border-nike-black focus:outline-none focus:ring-1 focus:ring-nike-black {{ $authUser ? 'bg-nike-gray-100 text-nike-gray-500' : '' }} @error('name') border-rose-500 @enderror"
                             placeholder="Nhập họ và tên của bạn"
-                            value="{{ old('name', auth()->user()->name ?? '') }}" required>
+                            value="{{ $authUser ? $authUser->name : old('name') }}"
+                            {{ $authUser ? 'readonly' : '' }}
+                            required>
                         @error('name')
-                            <p class="text-rose-500 text-xs mt-1">{{ $message }}</p>
+                            <p class="mt-1 text-xs text-rose-500">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <div>
-                        <label for="email" class="block text-xs font-bold uppercase tracking-wider text-nike-black mb-2">
-                            Địa chỉ Email <span class="text-rose-500">*</span>
+                        <label for="email" class="mb-2 block text-xs font-bold uppercase tracking-wider text-nike-black">
+                            Địa chỉ email <span class="text-rose-500">*</span>
                         </label>
-                        <input type="email" name="email" id="email" 
-                            class="w-full px-4 py-3 rounded-lg border border-nike-gray-300 focus:outline-none focus:border-nike-black focus:ring-1 focus:ring-nike-black text-sm transition-colors @error('email') border-rose-500 @enderror"
+                        <input type="email" name="email" id="email"
+                            class="w-full border border-nike-gray-300 px-4 py-3 text-sm transition-colors focus:border-nike-black focus:outline-none focus:ring-1 focus:ring-nike-black {{ $authUser ? 'bg-nike-gray-100 text-nike-gray-500' : '' }} @error('email') border-rose-500 @enderror"
                             placeholder="username@domain.com"
-                            value="{{ old('email', auth()->user()->email ?? '') }}" required>
+                            value="{{ $authUser ? $authUser->email : old('email') }}"
+                            {{ $authUser ? 'readonly' : '' }}
+                            required>
                         @error('email')
-                            <p class="text-rose-500 text-xs mt-1">{{ $message }}</p>
+                            <p class="mt-1 text-xs text-rose-500">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
 
-                <!-- Subject field -->
+                @if($authUser)
+                    <p class="border border-nike-gray-200 bg-nike-snow px-4 py-3 text-xs font-bold uppercase tracking-wider text-nike-gray-500">
+                        Thông tin liên hệ được lấy từ tài khoản của bạn.
+                    </p>
+                @endif
+
                 <div>
-                    <label for="subject" class="block text-xs font-bold uppercase tracking-wider text-nike-black mb-2">
+                    <label for="subject" class="mb-2 block text-xs font-bold uppercase tracking-wider text-nike-black">
                         Tiêu đề yêu cầu <span class="text-rose-500">*</span>
                     </label>
-                    <input type="text" name="subject" id="subject" 
-                        class="w-full px-4 py-3 rounded-lg border border-nike-gray-300 focus:outline-none focus:border-nike-black focus:ring-1 focus:ring-nike-black text-sm transition-colors @error('subject') border-rose-500 @enderror"
-                        placeholder="Ví dụ: Lỗi thanh toán, Tư vấn kích cỡ giày..."
-                        value="{{ old('subject') }}" required>
+                    <input type="text" name="subject" id="subject"
+                        class="w-full border border-nike-gray-300 px-4 py-3 text-sm transition-colors focus:border-nike-black focus:outline-none focus:ring-1 focus:ring-nike-black @error('subject') border-rose-500 @enderror"
+                        placeholder="Ví dụ: Lỗi thanh toán, tư vấn kích cỡ giày"
+                        value="{{ old('subject') }}"
+                        required>
                     @error('subject')
-                        <p class="text-rose-500 text-xs mt-1">{{ $message }}</p>
+                        <p class="mt-1 text-xs text-rose-500">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <!-- Message field -->
                 <div>
-                    <label for="message" class="block text-xs font-bold uppercase tracking-wider text-nike-black mb-2">
+                    <label for="message" class="mb-2 block text-xs font-bold uppercase tracking-wider text-nike-black">
                         Nội dung chi tiết <span class="text-rose-500">*</span>
                     </label>
-                    <textarea name="message" id="message" rows="6" 
-                        class="w-full px-4 py-3 rounded-lg border border-nike-gray-300 focus:outline-none focus:border-nike-black focus:ring-1 focus:ring-nike-black text-sm transition-colors @error('message') border-rose-500 @enderror"
-                        placeholder="Mô tả cụ thể vấn đề hoặc câu hỏi của bạn..." required>{{ old('message') }}</textarea>
+                    <textarea name="message" id="message" rows="6"
+                        class="w-full border border-nike-gray-300 px-4 py-3 text-sm transition-colors focus:border-nike-black focus:outline-none focus:ring-1 focus:ring-nike-black @error('message') border-rose-500 @enderror"
+                        placeholder="Mô tả cụ thể vấn đề hoặc câu hỏi của bạn"
+                        required>{{ old('message') }}</textarea>
                     @error('message')
-                        <p class="text-rose-500 text-xs mt-1">{{ $message }}</p>
+                        <p class="mt-1 text-xs text-rose-500">{{ $message }}</p>
                     @enderror
                 </div>
 
-                <!-- Submit Button -->
                 <div class="pt-2">
-                    <button type="submit" class="w-full bg-nike-black text-white hover:bg-nike-gray-800 font-bold uppercase py-4 rounded-full transition-colors text-sm tracking-widest shadow-sm">
+                    <button type="submit" class="w-full rounded-full bg-nike-black py-4 text-sm font-bold uppercase tracking-widest text-white shadow-sm transition-colors hover:bg-nike-gray-800">
                         Gửi yêu cầu hỗ trợ
                     </button>
                 </div>

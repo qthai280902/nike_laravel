@@ -69,7 +69,7 @@ class Product extends Model
      */
     public function approvedReviews(): HasMany
     {
-        return $this->reviews()->where('status', 'approved');
+        return $this->reviews()->where('status', ProductReview::STATUS_APPROVED);
     }
 
     /**
