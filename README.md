@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <em>Nơi sự chính xác của B2C gặp gỡ di sản của C2C.</em>
+  
 </p>
 
 ---
